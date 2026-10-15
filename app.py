@@ -1341,6 +1341,43 @@ def logout():
 # RUN APPLICATION
 # ==================================================
 
+ 
+# ==================================================
+# DATABASE INITIALIZATION
+# ==================================================
+
+def initialize_database():
+    with app.app_context():
+        db.create_all()
+        seed_departments()
+
+
+# Initialize tables when the app starts, including on Render/Gunicorn
+initialize_database()
+
+
+# ==================================================
+# RUN APPLICATION
+# ==================================================
+
+
+# ==================================================
+# DATABASE INITIALIZATION
+# ==================================================
+
+def initialize_database():
+    with app.app_context():
+        db.create_all()
+        seed_departments()
+
+
+# Initialize tables when the app starts, including on Render/Gunicorn
+initialize_database()
+
+
+# ==================================================
+# RUN APPLICATION
+# ==================================================
+
 if __name__ == "__main__":
-    seed_departments()
     app.run(debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
