@@ -1,0 +1,2819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report an Issue | Civic Sync</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #0ea5e9;
+            --gemini-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #06b6d4 100%);
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 20px -2px rgba(15,23,42,0.08);
+            --shadow-lg: 0 12px 30px -4px rgba(15,23,42,0.12);
+            --shadow-ai: 0 8px 32px rgba(37,99,235,0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: var(--slate-800);
+            min-height: 100vh;
+            padding: 24px 16px 80px;
+            position: relative;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        /* TOP NAVIGATION BAR */
+        .top-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            color: var(--slate-600);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+            border-color: #cbd5e1;
+            transform: translateX(-3px);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.1);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+        }
+
+        .nav-brand-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+
+        .nav-brand-title span {
+            color: var(--primary);
+        }
+
+        /* AI COMPANION PROMO BANNER */
+        .ai-assistant-banner {
+            background: linear-gradient(135deg, #1e1b4b 0%, #1e293b 60%, #0f172a 100%);
+            border: 1px solid rgba(139, 92, 246, 0.35);
+            border-radius: var(--radius-md);
+            padding: 18px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            box-shadow: var(--shadow-ai);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-assistant-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc, #38bdf8);
+            background-size: 200% auto;
+            animation: shimmer 4s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .banner-left {
+            flex: 1;
+        }
+
+        .ai-spark-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(139, 92, 246, 0.25);
+            border: 1px solid rgba(167, 139, 250, 0.4);
+            color: #c4b5fd;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .banner-left h3 {
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .banner-left p {
+            color: #cbd5e1;
+            font-size: 12.5px;
+            line-height: 1.45;
+        }
+
+        .open-ai-chat-btn {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+        }
+
+        .open-ai-chat-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+        }
+
+        /* MAIN CARD */
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            padding: 32px 36px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            bottom: -30px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+
+        .card-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .card-header p {
+            color: #dbeafe;
+            font-size: 14px;
+            line-height: 1.5;
+            max-width: 620px;
+        }
+
+        .progress-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 36px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-500);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: var(--slate-600);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .step-item.active {
+            color: var(--primary);
+        }
+
+        .step-item.active .step-circle {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step-divider {
+            flex: 1;
+            height: 2px;
+            background: #e2e8f0;
+            margin: 0 14px;
+        }
+
+        .card-body {
+            padding: 36px;
+        }
+
+        /* FORM SECTIONS */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: var(--slate-500);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 8px;
+        }
+
+        label .required {
+            color: var(--danger);
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .ai-refine-btn {
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .ai-refine-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .input-control, textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--slate-800);
+            background: white;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .input-control:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3.5px rgba(37,99,235,0.14);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 110px;
+            line-height: 1.6;
+        }
+
+        /* Pulse glow animation for AI populated inputs */
+        @keyframes fieldHighlight {
+            0% { background-color: #ecfdf5; border-color: #10b981; }
+            50% { background-color: #f0fdf4; border-color: #34d399; }
+            100% { background-color: white; border-color: #cbd5e1; }
+        }
+
+        .field-highlighted {
+            animation: fieldHighlight 2.5s ease-out;
+        }
+
+        /* CATEGORY CARDS */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .cat-card {
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            text-align: left;
+            position: relative;
+        }
+
+        .cat-card:hover {
+            border-color: #93c5fd;
+            background: #fafcff;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(37,99,235,0.08);
+        }
+
+        .cat-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .cat-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background: #f1f5f9;
+            color: var(--slate-700);
+            transition: all 0.2s;
+        }
+
+        .cat-card.active .cat-card-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .cat-card h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-800);
+            margin-bottom: 3px;
+        }
+
+        .cat-card.active h4 {
+            color: var(--primary-dark);
+        }
+
+        .cat-card p {
+            font-size: 11px;
+            color: var(--slate-500);
+            line-height: 1.4;
+        }
+
+        /* AI URGENCY LIVE METER */
+        .ai-preview-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            border-radius: var(--radius-md);
+            padding: 22px 24px;
+            margin: 20px 0 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .ai-preview-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #38bdf8;
+        }
+
+        .ai-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #38bdf8;
+            box-shadow: 0 0 10px #38bdf8;
+            animation: pulse 1.8s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.6; }
+            50% { transform: scale(1.4); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.6; }
+        }
+
+        .ai-meter-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .ai-score-ring {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 3px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: border-color 0.4s;
+        }
+
+        .ai-score-num {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+        }
+
+        .ai-score-denom {
+            font-size: 9px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .ai-meter-details {
+            flex: 1;
+        }
+
+        .ai-meter-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .ai-meter-bar-fill {
+            height: 100%;
+            width: 20%;
+            background: #10b981;
+            border-radius: 4px;
+            transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s;
+        }
+
+        .ai-priority-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+        }
+
+        .priority-pill {
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pill-critical { background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid #ef4444; }
+        .pill-high { background: rgba(245, 158, 11, 0.25); color: #fcd34d; border: 1px solid #f59e0b; }
+        .pill-medium { background: rgba(56, 189, 248, 0.25); color: #7dd3fc; border: 1px solid #38bdf8; }
+        .pill-low { background: rgba(16, 185, 129, 0.25); color: #6ee7b7; border: 1px solid #10b981; }
+
+        .sla-target {
+            color: #cbd5e1;
+            font-size: 11px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sla-target i { color: #38bdf8; }
+
+        .ai-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .risk-chip {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #e2e8f0;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ai-summary-text {
+            font-size: 12px;
+            color: #cbd5e1;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            font-style: italic;
+        }
+
+        .category-suggestion-pill {
+            display: none;
+            background: rgba(14, 165, 233, 0.2);
+            border: 1px solid #0ea5e9;
+            color: #7dd3fc;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .category-suggestion-pill:hover {
+            background: rgba(14, 165, 233, 0.35);
+        }
+
+        /* MAP SECTION */
+        .map-section {
+            background: #f8fafc;
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .map-search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .map-search-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: white;
+            outline: none;
+        }
+
+        .map-search-btn, .gps-btn {
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .map-search-btn:hover, .gps-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .gps-btn {
+            background: #0284c7;
+        }
+
+        .gps-btn:hover {
+            background: #0369a1;
+        }
+
+        #map {
+            width: 100%;
+            height: 320px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #cbd5e1;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+            z-index: 10;
+        }
+
+        .coord-display-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 14px;
+        }
+
+        .coord-badge {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .coord-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--slate-500);
+            text-transform: uppercase;
+        }
+
+        .coord-val {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            font-family: monospace;
+        }
+
+        /* IMAGE DROPZONE */
+        .dropzone {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 26px 20px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .dropzone-icon {
+            font-size: 32px;
+            color: var(--slate-400);
+            margin-bottom: 10px;
+            transition: color 0.2s;
+        }
+
+        .dropzone:hover .dropzone-icon {
+            color: var(--primary);
+        }
+
+        .dropzone-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 4px;
+        }
+
+        .dropzone-subtitle {
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        .preview-box {
+            display: none;
+            margin-top: 14px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .preview-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            object-fit: cover;
+            border: 1px solid #cbd5e1;
+        }
+
+        .remove-img-btn {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* SUBMIT BUTTON */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37,99,235,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37,99,235,0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =======================================================
+           AI CHATBOT FLOATING WIDGET & DRAWER STYLES
+           ======================================================= */
+        .ai-chat-launcher {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%);
+            color: white;
+            padding: 12px 20px 12px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.45);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1.5px solid rgba(255,255,255,0.2);
+        }
+
+        .ai-chat-launcher:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 36px rgba(124, 58, 237, 0.6);
+        }
+
+        .launcher-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #f8fafc;
+        }
+
+        .launcher-label {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .launcher-text {
+            font-size: 13.5px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .launcher-sub {
+            font-size: 10.5px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            border: 2px solid #1e1b4b;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        /* CHAT DRAWER MODAL */
+        .ai-chat-drawer {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 410px;
+            max-width: calc(100vw - 32px);
+            height: 620px;
+            max-height: calc(100vh - 48px);
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 16px 50px -5px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(226, 232, 240, 0.8);
+            display: flex;
+            flex-direction: column;
+            z-index: 10000;
+            overflow: hidden;
+            transform: scale(0.9) translateY(40px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .ai-chat-drawer.open {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* CHAT HEADER */
+        .chat-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+        }
+
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            color: white;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+        }
+
+        .chat-avatar-status {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border: 2px solid #0f172a;
+            border-radius: 50%;
+        }
+
+        .chat-title {
+            font-size: 14.5px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1.2;
+        }
+
+        .gemini-pill {
+            font-size: 9.5px;
+            padding: 2px 7px;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .chat-status-line {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .chat-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-btn-icon {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #cbd5e1;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .chat-btn-icon:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* QUICK PROMPTS BAR */
+        .chat-quick-chips {
+            display: flex;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+
+        .chat-quick-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .quick-chip {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: var(--slate-700);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .quick-chip i {
+            color: var(--primary);
+        }
+
+        .quick-chip:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* CHAT MESSAGES BODY */
+        .chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            background: #fafcff;
+        }
+
+        .chat-msg {
+            display: flex;
+            gap: 10px;
+            max-width: 88%;
+        }
+
+        .chat-msg.bot-msg {
+            align-self: flex-start;
+        }
+
+        .chat-msg.user-msg {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .bot-avatar-mini {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .msg-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .msg-bubble {
+            padding: 12px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--slate-800);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            word-break: break-word;
+        }
+
+        .bot-msg .msg-bubble {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-top-left-radius: 4px;
+        }
+
+        .user-msg .msg-bubble {
+            background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+            color: white;
+            border-top-right-radius: 4px;
+        }
+
+        .msg-bubble p {
+            margin-bottom: 8px;
+        }
+
+        .msg-bubble p:last-child {
+            margin-bottom: 0;
+        }
+
+        .msg-bubble ul, .msg-bubble ol {
+            padding-left: 18px;
+            margin: 6px 0 8px;
+        }
+
+        .msg-bubble li {
+            margin-bottom: 4px;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 4px;
+            align-self: flex-start;
+        }
+
+        .user-msg .msg-time {
+            align-self: flex-end;
+        }
+
+        /* STRUCTURED DRAFT CARD INSIDE CHAT */
+        .draft-action-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
+        }
+
+        .draft-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .draft-category-badge {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        .draft-title-preview {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 6px;
+        }
+
+        .draft-desc-preview {
+            font-size: 12px;
+            color: var(--slate-600);
+            line-height: 1.45;
+            margin-bottom: 12px;
+            max-height: 90px;
+            overflow-y: auto;
+            background: white;
+            padding: 8px 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .apply-draft-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition: all 0.2s;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .apply-draft-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 14px rgba(16, 185, 129, 0.45);
+        }
+
+        .apply-draft-btn.applied {
+            background: #64748b;
+            cursor: default;
+            transform: none;
+        }
+
+        /* TYPING INDICATOR */
+        .chat-typing {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            align-self: flex-start;
+        }
+
+        .typing-bubble {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border-top-left-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #94a3b8;
+            animation: bounceDot 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounceDot {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); background: var(--primary); }
+        }
+
+        /* CHAT INPUT AREA */
+        .chat-input-bar {
+            padding: 12px 16px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 6px 8px 6px 14px;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input-wrapper:focus-within {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        #chatInput {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 13.5px;
+            color: var(--slate-800);
+            resize: none;
+            outline: none;
+            max-height: 90px;
+            padding: 6px 0;
+            line-height: 1.4;
+        }
+
+        .chat-send-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .chat-send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(37,99,235,0.35);
+        }
+
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chat-footer-note {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .chat-context-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-context-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast-notification {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #0f172a;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100000;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .toast-notification.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-notification i {
+            color: #10b981;
+            font-size: 16px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 650px) {
+            .category-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-header, .card-body {
+                padding: 24px 20px;
+            }
+
+            .progress-stepper {
+                display: none;
+            }
+
+            .map-search-row {
+                flex-direction: column;
+            }
+
+            .coord-display-row {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-assistant-banner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .open-ai-chat-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ai-chat-drawer {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100vw;
+                max-height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast Notification -->
+<div class="toast-notification" id="toastNotification">
+    <i class="fa-solid fa-circle-check"></i>
+    <span id="toastMessage">Complaint form populated from AI draft!</span>
+</div>
+
+<div class="container">
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <a href="/dashboard" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Dashboard
+        </a>
+
+        <div style="display:flex; align-items:center; gap:12px;">
+            <a href="/community-voting" style="display:inline-flex; align-items:center; gap:6px; background:#fff7ed; border:1px solid #fed7aa; color:#ea580c; padding:7px 14px; border-radius:8px; font-size:13px; font-weight:700; text-decoration:none; transition:all 0.2s;">
+                <i class="fa-solid fa-fire"></i> Community Voting
+            </a>
+            <a href="/dashboard" class="nav-brand">
+                <div class="nav-brand-icon">
+                    <i class="fa-solid fa-city"></i>
+                </div>
+                <div class="nav-brand-title">Civic<span>Sync</span></div>
+            </a>
+        </div>
+    </div>
+
+    <!-- AI Companion Interactive Banner -->
+    <div class="ai-assistant-banner">
+        <div class="banner-left">
+            <div class="ai-spark-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Gemini AI Assistant</div>
+            <h3>Need Help Drafting Your Grievance?</h3>
+            <p>Our municipal AI companion helps you articulate problems, choose the right department, and auto-fills your complaint form with 1 click.</p>
+        </div>
+        <button type="button" class="open-ai-chat-btn" id="openChatFromBanner">
+            <i class="fa-solid fa-comments"></i>
+            Launch Civic AI Assistant
+        </button>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+
+        <!-- Card Header -->
+        <div class="card-header">
+            <h1>Report a Civic Grievance</h1>
+            <p>File an issue with GPS coordinates, photographic evidence, and real-time AI urgency triage for rapid municipal dispatch.</p>
+        </div>
+
+        <!-- Progress Stepper -->
+        <div class="progress-stepper">
+            <div class="step-item active">
+                <div class="step-circle">1</div>
+                <span>Incident Details</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item active">
+                <div class="step-circle">2</div>
+                <span>AI Triage & Classification</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item active">
+                <div class="step-circle">3</div>
+                <span>GPS Pin & Submit</span>
+            </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body">
+
+            <!-- Error Alert Banner (Server Error / Validation Feedback) -->
+            {% if request.args.get('error') %}
+            <div id="reportErrorAlert" class="report-error-alert" style="display: flex; align-items: flex-start; gap: 14px; background: #fef2f2; border: 1.5px solid #f87171; border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px; color: #991b1b; box-shadow: 0 4px 15px rgba(239,68,68,0.12);">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #dc2626; font-size: 18px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div style="flex: 1;">
+                    <strong style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 3px;" id="reportErrorTitle">Photo Verification or Submission Issue</strong>
+                    <span style="font-size: 13px; line-height: 1.5;" id="reportErrorMsg">{{ request.args.get('error') }}</span>
+                </div>
+                <button type="button" onclick="document.getElementById('reportErrorAlert').style.display='none'" style="background: none; border: none; color: #991b1b; font-size: 16px; cursor: pointer; padding: 4px;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            {% else %}
+            <div id="reportErrorAlert" class="report-error-alert" style="display: none; align-items: flex-start; gap: 14px; background: #fef2f2; border: 1.5px solid #f87171; border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px; color: #991b1b; box-shadow: 0 4px 15px rgba(239,68,68,0.12);">
+                <div style="width: 38px; height: 38px; border-radius: 50%; background: #fee2e2; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #dc2626; font-size: 18px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div style="flex: 1;">
+                    <strong style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 3px;" id="reportErrorTitle">Photo Verification or Submission Issue</strong>
+                    <span style="font-size: 13px; line-height: 1.5;" id="reportErrorMsg"></span>
+                </div>
+                <button type="button" onclick="document.getElementById('reportErrorAlert').style.display='none'" style="background: none; border: none; color: #991b1b; font-size: 16px; cursor: pointer; padding: 4px;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            {% endif %}
+
+            <form id="complaintForm" action="/report-issue" method="POST" enctype="multipart/form-data">
+
+                <!-- STEP 1: CATEGORY SELECTION -->
+                <div class="form-group">
+                    <div class="section-title">
+                        <i class="fa-solid fa-layer-group"></i>
+                        1. Select Department Category <span class="required">*</span>
+                    </div>
+                    <div class="section-subtitle">Choose the civic department responsible for addressing this grievance:</div>
+
+                    <div class="category-grid" id="categoryGrid">
+                        <div class="cat-card active" data-category="Roads">
+                            <div class="cat-card-icon"><i class="fa-solid fa-road"></i></div>
+                            <h4>Roads & Pavements</h4>
+                            <p>Potholes, broken roads, footpath damage</p>
+                        </div>
+                        <div class="cat-card" data-category="Sanitation">
+                            <div class="cat-card-icon"><i class="fa-solid fa-trash-can"></i></div>
+                            <h4>Sanitation & Waste</h4>
+                            <p>Garbage overflow, street sweeping, dumpyards</p>
+                        </div>
+                        <div class="cat-card" data-category="Water Supply">
+                            <div class="cat-card-icon"><i class="fa-solid fa-faucet-drip"></i></div>
+                            <h4>Water Supply</h4>
+                            <p>Pipeline burst, contaminated water, low pressure</p>
+                        </div>
+                        <div class="cat-card" data-category="Electricity">
+                            <div class="cat-card-icon"><i class="fa-solid fa-bolt"></i></div>
+                            <h4>Electricity & Lights</h4>
+                            <p>Dark streetlights, sparking wires, transformers</p>
+                        </div>
+                        <div class="cat-card" data-category="Drainage">
+                            <div class="cat-card-icon"><i class="fa-solid fa-water"></i></div>
+                            <h4>Drainage & Sewage</h4>
+                            <p>Choked drains, open manholes, waterlogging</p>
+                        </div>
+                        <div class="cat-card" data-category="Other">
+                            <div class="cat-card-icon"><i class="fa-solid fa-circle-question"></i></div>
+                            <h4>Other Civic Works</h4>
+                            <p>Parks, signs, public amenities, general issues</p>
+                        </div>
+                    </div>
+
+                    <!-- Hidden input submitted to Flask -->
+                    <input type="hidden" name="category" id="categoryInput" value="Roads" required>
+                </div>
+
+                <!-- STEP 2: ISSUE DETAILS & AI TRIAGE -->
+                <div class="form-group">
+                    <div class="section-title">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        2. Issue Description & Live AI Triage
+                    </div>
+                    <div class="section-subtitle">Provide details. Our AI engine evaluates safety hazards and resolution SLAs in real time.</div>
+
+                    <label for="title">Grievance Title <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" class="input-control" placeholder="e.g. Hazardous deep pothole causing traffic accidents" maxlength="150" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-row">
+                        <label for="description" style="margin-bottom: 0;">Detailed Description <span class="required">*</span></label>
+                        <button type="button" class="ai-refine-btn" id="refineDescBtn">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Improve with Gemini AI
+                        </button>
+                    </div>
+                    <textarea id="description" name="description" class="input-control" placeholder="Describe the location, hazard level, proximity to schools/hospitals, or any imminent risk..." required></textarea>
+                </div>
+
+                <!-- LIVE AI URGENCY METER CARD -->
+                <div class="ai-preview-card" id="aiCard">
+                    <div class="ai-header">
+                        <div class="ai-badge">
+                            <span class="ai-pulse" id="aiPulse"></span>
+                            <span id="aiStatusText">AI Safety & Urgency Engine Active</span>
+                        </div>
+                        <div class="sla-target" id="aiSlaContainer">
+                            <i class="fa-regular fa-clock"></i>
+                            <span id="aiSlaText">Target SLA: Within 48–72 Hours</span>
+                        </div>
+                    </div>
+
+                    <div class="ai-meter-container">
+                        <div class="ai-score-ring" id="aiScoreRing">
+                            <span class="ai-score-num" id="aiScoreNum">20</span>
+                            <span class="ai-score-denom">/ 100</span>
+                        </div>
+                        <div class="ai-meter-details">
+                            <div class="ai-meter-bar-bg">
+                                <div class="ai-meter-bar-fill" id="aiBarFill"></div>
+                            </div>
+                            <div class="ai-priority-row">
+                                <span class="priority-pill pill-low" id="aiPriorityBadge">Low Urgency</span>
+                                <span style="font-size:11px; color:#94a3b8;" id="aiAgeInfo">Google Gemini Cloud Triage</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detected Risk Chips -->
+                    <div class="ai-tags-row" id="aiRiskTags">
+                        <span class="risk-chip"><i class="fa-solid fa-check"></i> Standard Civic Review</span>
+                    </div>
+
+                    <!-- AI Summary -->
+                    <div class="ai-summary-text" id="aiSummaryText">
+                        Start describing your grievance above or chat with Civic AI. The system will evaluate public safety impact in real time.
+                    </div>
+
+                    <!-- Smart Category Suggestion Pill -->
+                    <div class="category-suggestion-pill" id="categorySuggestionPill">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span id="suggestedCatText"></span>
+                    </div>
+                </div>
+
+                <!-- STEP 3: GPS PIN & INTERACTIVE MAP -->
+                <div class="map-section">
+                    <div class="section-title">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        3. Pin Exact Incident Location <span class="required">*</span>
+                    </div>
+                    <div class="section-subtitle">Click the map, search a landmark, or use your GPS to drop the incident coordinates:</div>
+
+                    <div class="map-search-row">
+                        <input type="text" id="mapSearchInput" class="map-search-input" placeholder="Search landmark, street or area (e.g. Station Road, Market)...">
+                        <button type="button" id="mapSearchBtn" class="map-search-btn">
+                            <i class="fa-solid fa-magnifying-glass"></i> Search
+                        </button>
+                        <button type="button" id="getLocationBtn" class="gps-btn">
+                            <i class="fa-solid fa-location-crosshairs"></i> Use GPS
+                        </button>
+                    </div>
+
+                    <!-- Leaflet Map Element -->
+                    <div id="map"></div>
+
+                    <!-- Coordinates Display -->
+                    <div class="coord-display-row">
+                        <div class="coord-badge">
+                            <span class="coord-title">Latitude</span>
+                            <span class="coord-val" id="latDisplay">--.------</span>
+                        </div>
+                        <div class="coord-badge">
+                            <span class="coord-title">Longitude</span>
+                            <span class="coord-val" id="lngDisplay">--.------</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Coordinate Form Inputs -->
+                    <input type="hidden" name="latitude" id="latitude" required>
+                    <input type="hidden" name="longitude" id="longitude" required>
+
+                    <div class="form-group" style="margin-top: 16px; margin-bottom: 0;">
+                        <label for="location">Address / Landmark Reference <span class="required">*</span></label>
+                        <input type="text" id="location" name="location" class="input-control" placeholder="Auto-filled from map or enter address manually" required>
+                    </div>
+
+                    <!-- Multi-Citizen Duplicate Discovery & Cluster Escalation Notice -->
+                    <div id="nearbyClusterNotice" style="display: none; margin-top: 16px; background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1.5px solid #86efac; border-radius: var(--radius-sm); padding: 14px 16px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div style="width: 32px; height: 32px; border-radius: 8px; background: #10b981; color: white; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: #166534;" id="clusterNoticeTitle">
+                                        Multi-Citizen Community Match Found Nearby
+                                    </div>
+                                    <span style="font-size: 10px; font-weight: 700; background: #dcfce7; color: #15803d; border: 1px solid #86efac; padding: 2px 7px; border-radius: 12px; text-transform: uppercase;">
+                                        Auto-Cluster Priority
+                                    </span>
+                                </div>
+                                <div style="font-size: 12px; color: #166534; margin-top: 4px; line-height: 1.45;" id="clusterNoticeDesc">
+                                    Other citizens have also reported this issue in this immediate area. Duplicate citizen reports are fully supported — your grievance will link to the neighborhood cluster, register your endorsement vote, and escalate emergency response!
+                                </div>
+                                <div id="nearbyList" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 4: PHOTO EVIDENCE -->
+                <div class="form-group">
+                    <div class="section-title">
+                        <i class="fa-solid fa-camera"></i>
+                        4. Photographic Evidence (Optional)
+                    </div>
+                    <div class="section-subtitle">Attaching a clear photo helps the dispatch crew verify and resolve the issue faster. (Verified via Gemini AI)</div>
+
+                    <div class="dropzone" id="dropzone">
+                        <i class="fa-solid fa-cloud-arrow-up dropzone-icon"></i>
+                        <div class="dropzone-title">Click to upload or drag & drop image</div>
+                        <div class="dropzone-subtitle">JPG, PNG, or WEBP up to 5 MB • Gemini Vision Verified</div>
+                        <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/webp" style="display:none;">
+                    </div>
+
+                    <!-- Preview Thumbnail -->
+                    <div class="preview-box" id="previewBox">
+                        <div class="preview-info">
+                            <img id="previewThumbnail" class="preview-img" src="" alt="Proof Preview">
+                            <div>
+                                <div id="previewFileName" style="font-size:13px; font-weight:600; color:var(--slate-800);"></div>
+                                <div id="previewFileSize" style="font-size:11px; color:var(--slate-500);"></div>
+                            </div>
+                        </div>
+                        <button type="button" class="remove-img-btn" id="removeImgBtn">
+                            <i class="fa-solid fa-trash"></i> Remove
+                        </button>
+                    </div>
+
+                    <!-- Real-time Gemini Vision Verification Status Box -->
+                    <div id="aiVisionVerificationBox" style="display: none; margin-top: 14px; border-radius: var(--radius-sm); padding: 14px 16px; transition: all 0.3s ease;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div id="aiVisionIcon" style="font-size: 20px; flex-shrink: 0; margin-top: 2px;"></div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                                    <span id="aiVisionStatus" style="font-size: 13.5px; font-weight: 700;"></span>
+                                    <span id="aiVisionBadge" style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; padding: 3px 9px; border-radius: 12px;"></span>
+                                </div>
+                                <div id="aiVisionReason" style="font-size: 12px; margin-top: 4px; line-height: 1.45;"></div>
+                                <div id="aiVisionTags" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Submit Grievance to Municipal Grid</span>
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- =======================================================
+     FLOATING GEMINI AI CHATBOT WIDGET
+     ======================================================= -->
+<!-- Launcher Button -->
+<div class="ai-chat-launcher" id="aiChatLauncher">
+    <div class="launcher-icon">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+    </div>
+    <div class="launcher-label">
+        <span class="launcher-text">Ask Civic AI</span>
+        <span class="launcher-sub">Powered by Gemini</span>
+    </div>
+    <span class="online-dot"></span>
+</div>
+
+<!-- Chatbot Drawer Window -->
+<div class="ai-chat-drawer" id="aiChatDrawer">
+    <!-- Header -->
+    <div class="chat-header">
+        <div class="chat-header-info">
+            <div class="chat-avatar">
+                <i class="fa-solid fa-robot"></i>
+                <span class="chat-avatar-status"></span>
+            </div>
+            <div>
+                <div class="chat-title">
+                    CivicSync Assistant
+                    <span class="gemini-pill"><i class="fa-solid fa-bolt"></i> Gemini AI</span>
+                </div>
+                <div class="chat-status-line">Smart Municipal Triage & Drafting Concierge</div>
+            </div>
+        </div>
+        <div class="chat-actions">
+            <button type="button" class="chat-btn-icon" id="clearChatBtn" title="Restart Conversation">
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button type="button" class="chat-btn-icon" id="closeChatBtn" title="Close Assistant">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Prompt Chips -->
+    <div class="chat-quick-chips" id="quickChipsContainer">
+        <button type="button" class="quick-chip" data-prompt="Help me draft a complaint"><i class="fa-solid fa-pen-nib"></i> Draft Complaint</button>
+        <button type="button" class="quick-chip" data-prompt="Which department handles my issue?"><i class="fa-solid fa-building-flag"></i> Find Department</button>
+        <button type="button" class="quick-chip" data-prompt="What are the standard resolution SLAs?"><i class="fa-regular fa-clock"></i> SLA Timelines</button>
+        <button type="button" class="quick-chip" data-prompt="Is my issue a critical safety emergency?"><i class="fa-solid fa-triangle-exclamation"></i> Check Hazard</button>
+    </div>
+
+    <!-- Chat Messages Scroll Area -->
+    <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot-msg">
+            <div class="bot-avatar-mini"><i class="fa-solid fa-robot"></i></div>
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    <p>Hello! I am your <strong>CivicSync AI Assistant</strong>, powered by Google Gemini. 🏛️</p>
+                    <p>I can help you:</p>
+                    <ul>
+                        <li>Draft clear, impactful complaint titles and descriptions</li>
+                        <li>Identify the responsible municipal department</li>
+                        <li>Check standard resolution SLAs and citizen safety advice</li>
+                    </ul>
+                    <p>Tell me what civic issue you are facing, or click one of the quick suggestions above!</p>
+                </div>
+                <div class="msg-time">Just now</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Typing Indicator -->
+    <div class="chat-typing" id="chatTyping" style="display: none;">
+        <div class="bot-avatar-mini"><i class="fa-solid fa-robot"></i></div>
+        <div class="typing-bubble">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span style="font-size: 11px; color: #64748b; margin-left: 6px;">Gemini is thinking...</span>
+        </div>
+    </div>
+
+    <!-- Chat Input Bar -->
+    <div class="chat-input-bar">
+        <div class="chat-input-wrapper">
+            <textarea id="chatInput" placeholder="Describe the issue or ask a civic question..." rows="1"></textarea>
+            <button type="button" id="chatSendBtn" class="chat-send-btn" title="Send Message">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
+        <div class="chat-footer-note">
+            <span><i class="fa-solid fa-shield-halved"></i> Google Gemini Flash</span>
+            <button type="button" class="chat-context-btn" id="sendContextBtn" title="Send current form text to AI for refinement">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Use Form Text
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // -----------------------------------------------------------------
+    // 1. CATEGORY SELECTION CARDS
+    // -----------------------------------------------------------------
+    const catCards = document.querySelectorAll(".cat-card");
+    const categoryInput = document.getElementById("categoryInput");
+
+    catCards.forEach(card => {
+        card.addEventListener("click", () => {
+            selectCategory(card.dataset.category);
+            triggerAiAnalysis();
+        });
+    });
+
+    function selectCategory(catName) {
+        catCards.forEach(c => {
+            if (c.dataset.category === catName) {
+                c.classList.add("active");
+            } else {
+                c.classList.remove("active");
+            }
+        });
+        categoryInput.value = catName;
+
+        // Check duplicates if lat/lng are selected
+        if (typeof checkNearbyDuplicateReports === "function" && latInput && latInput.value && lngInput && lngInput.value) {
+            checkNearbyDuplicateReports(parseFloat(latInput.value), parseFloat(lngInput.value));
+        }
+
+        // Re-validate photo match against new category if an image is currently attached
+        if (typeof validateUploadedImage === "function" && imageInput && imageInput.files && imageInput.files.length > 0) {
+            validateUploadedImage(imageInput.files[0]);
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 2. REAL-TIME AI URGENCY & HAZARD EVALUATION (DEBOUNCED)
+    // -----------------------------------------------------------------
+    const titleInput = document.getElementById("title");
+    const descInput = document.getElementById("description");
+    const aiBarFill = document.getElementById("aiBarFill");
+    const aiScoreNum = document.getElementById("aiScoreNum");
+    const aiPriorityBadge = document.getElementById("aiPriorityBadge");
+    const aiSlaText = document.getElementById("aiSlaText");
+    const aiRiskTags = document.getElementById("aiRiskTags");
+    const aiSummaryText = document.getElementById("aiSummaryText");
+    const aiPulse = document.getElementById("aiPulse");
+    const aiStatusText = document.getElementById("aiStatusText");
+    const catSuggestionPill = document.getElementById("categorySuggestionPill");
+    const suggestedCatText = document.getElementById("suggestedCatText");
+
+    let debounceTimer = null;
+
+    function triggerAiAnalysis() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(runAiTriage, 350);
+    }
+
+    titleInput.addEventListener("input", triggerAiAnalysis);
+    descInput.addEventListener("input", triggerAiAnalysis);
+
+    async function runAiTriage() {
+        const title = titleInput.value.trim();
+        const description = descInput.value.trim();
+        const category = categoryInput.value;
+
+        if (!title && !description) return;
+
+        aiStatusText.textContent = "AI Analyzing Incident...";
+        aiPulse.style.background = "#f59e0b";
+
+        try {
+            const resp = await fetch("/api/ai/analyze-complaint", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, description, category })
+            });
+
+            if (!resp.ok) return;
+            const data = await resp.json();
+            if (data.success && data.analysis) {
+                renderAiMetrics(data.analysis, title + " " + description);
+            }
+        } catch (err) {
+            console.error("AI Analysis error:", err);
+        } finally {
+            aiStatusText.textContent = "AI Safety & Urgency Engine Active";
+            aiPulse.style.background = "#38bdf8";
+        }
+    }
+
+    function renderAiMetrics(analysis, fullText) {
+        const score = analysis.urgency_score || 20;
+        aiScoreNum.textContent = score;
+        aiBarFill.style.width = score + "%";
+
+        // Priority Color & Badge
+        aiPriorityBadge.className = "priority-pill";
+        if (score >= 80) {
+            aiPriorityBadge.classList.add("pill-critical");
+            aiPriorityBadge.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Critical Priority`;
+            aiBarFill.style.backgroundColor = "#ef4444";
+        } else if (score >= 60) {
+            aiPriorityBadge.classList.add("pill-high");
+            aiPriorityBadge.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> High Priority`;
+            aiBarFill.style.backgroundColor = "#f59e0b";
+        } else if (score >= 35) {
+            aiPriorityBadge.classList.add("pill-medium");
+            aiPriorityBadge.innerHTML = `<i class="fa-solid fa-circle-info"></i> Medium Priority`;
+            aiBarFill.style.backgroundColor = "#0ea5e9";
+        } else {
+            aiPriorityBadge.classList.add("pill-low");
+            aiPriorityBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> Low Priority`;
+            aiBarFill.style.backgroundColor = "#10b981";
+        }
+
+        // SLA
+        aiSlaText.textContent = "Target SLA: " + (analysis.sla || "Within 48–72 Hours");
+
+        // Risk Tags
+        aiRiskTags.innerHTML = "";
+        const tags = analysis.risk_tags || ["Standard Civic Review"];
+        tags.forEach(tag => {
+            const chip = document.createElement("span");
+            chip.className = "risk-chip";
+            chip.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:#38bdf8;"></i> ${escapeHtml(tag)}`;
+            aiRiskTags.appendChild(chip);
+        });
+
+        // Summary
+        aiSummaryText.textContent = analysis.ai_summary || "Issue submitted for routine departmental triage.";
+
+        // Smart Category Detection
+        const lower = fullText.toLowerCase();
+        let suggestedCat = null;
+        if (lower.match(/\b(wire|electric|light|shock|pole|transformer|spark)\b/)) {
+            suggestedCat = "Electricity";
+        } else if (lower.match(/\b(water|pipe|leak|pipeline|contamination|tap)\b/)) {
+            suggestedCat = "Water Supply";
+        } else if (lower.match(/\b(pothole|road|asphalt|footpath|curb|divider)\b/)) {
+            suggestedCat = "Roads";
+        } else if (lower.match(/\b(garbage|trash|waste|dump|litter|cleaning)\b/)) {
+            suggestedCat = "Sanitation";
+        } else if (lower.match(/\b(drain|sewage|gutter|manhole|waterlog|flood)\b/)) {
+            suggestedCat = "Drainage";
+        }
+
+        if (suggestedCat && suggestedCat !== categoryInput.value) {
+            suggestedCatText.textContent = `AI Suggests "${suggestedCat}". Click to switch category.`;
+            catSuggestionPill.style.display = "inline-flex";
+            catSuggestionPill.onclick = () => {
+                selectCategory(suggestedCat);
+                catSuggestionPill.style.display = "none";
+                triggerAiAnalysis();
+            };
+        } else {
+            catSuggestionPill.style.display = "none";
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // 3. ADVANCED LEAFLET MAP WITH GEOLOCATION & NOMINATIM SEARCH
+    // -----------------------------------------------------------------
+    const defaultLat = 16.7;
+    const defaultLng = 74.46;
+
+    const map = L.map("map").setView([defaultLat, defaultLng], 13);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let marker = null;
+    const latInput = document.getElementById("latitude");
+    const lngInput = document.getElementById("longitude");
+    const latDisplay = document.getElementById("latDisplay");
+    const lngDisplay = document.getElementById("lngDisplay");
+    const locationInput = document.getElementById("location");
+
+    function setMapPin(lat, lng, addressText = null) {
+        latInput.value = lat.toFixed(8);
+        lngInput.value = lng.toFixed(8);
+        latDisplay.textContent = lat.toFixed(6);
+        lngDisplay.textContent = lng.toFixed(6);
+
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+            marker.on("dragend", function (e) {
+                const pos = marker.getLatLng();
+                setMapPin(pos.lat, pos.lng);
+                reverseGeocode(pos.lat, pos.lng);
+            });
+        }
+
+        marker.bindPopup(`<b>Incident Location</b><br>${lat.toFixed(5)}, ${lng.toFixed(5)}`).openPopup();
+        map.setView([lat, lng], 16);
+
+        if (addressText) {
+            locationInput.value = addressText;
+        }
+
+        checkNearbyDuplicateReports(lat, lng);
+    }
+
+    map.on("click", function (e) {
+        setMapPin(e.latlng.lat, e.latlng.lng);
+        reverseGeocode(e.latlng.lat, e.latlng.lng);
+    });
+
+    // Reverse Geocoding via Nominatim
+    async function reverseGeocode(lat, lng) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const data = await res.json();
+            if (data && data.display_name && !locationInput.value) {
+                locationInput.value = data.display_name.split(",").slice(0, 3).join(",");
+            }
+        } catch (e) {
+            console.log("Reverse geocode skip:", e);
+        }
+    }
+
+    // Check for nearby duplicate grievances to support multi-citizen reporting and priority clustering
+    async function checkNearbyDuplicateReports(lat, lng) {
+        if (!lat || !lng) return;
+        const category = categoryInput ? categoryInput.value : "";
+        const loc = locationInput ? locationInput.value : "";
+        const notice = document.getElementById("nearbyClusterNotice");
+        const listDiv = document.getElementById("nearbyList");
+
+        try {
+            const res = await fetch(`/api/complaints/nearby?lat=${lat}&lng=${lng}&category=${encodeURIComponent(category)}&location=${encodeURIComponent(loc)}`);
+            const data = await res.json();
+            if (data.success && data.duplicates && data.duplicates.length > 0) {
+                notice.style.display = "block";
+                listDiv.innerHTML = "";
+                data.duplicates.slice(0, 3).forEach(dup => {
+                    const row = document.createElement("div");
+                    row.style.cssText = "display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.85); border:1px solid #bbf7d0; border-radius:6px; padding:6px 10px; font-size:11.5px;";
+                    row.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:6px; overflow:hidden;">
+                            <span style="font-weight:700; color:#15803d; flex-shrink:0;">#${dup.complaint_id}</span>
+                            <span style="color:#1f2937; max-width:260px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(dup.title)}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+                            <span style="color:#047857; font-weight:600;">~${dup.distance_m || 50}m away</span>
+                            <span style="background:#fed7aa; color:#9a3412; font-weight:700; padding:1px 6px; border-radius:8px; font-size:10px;"><i class="fa-solid fa-fire"></i> ${dup.upvotes || 0}</span>
+                        </div>
+                    `;
+                    listDiv.appendChild(row);
+                });
+            } else {
+                notice.style.display = "none";
+            }
+        } catch (e) {
+            console.log("Nearby issues check skipped:", e);
+        }
+    }
+
+    // Geocode Search Bar
+    document.getElementById("mapSearchBtn").addEventListener("click", searchLocation);
+    document.getElementById("mapSearchInput").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            searchLocation();
+        }
+    });
+
+    async function searchLocation() {
+        const query = document.getElementById("mapSearchInput").value.trim();
+        if (!query) return;
+
+        const btn = document.getElementById("mapSearchBtn");
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Searching...`;
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const results = await res.json();
+            if (results && results.length > 0) {
+                const item = results[0];
+                const lat = parseFloat(item.lat);
+                const lon = parseFloat(item.lon);
+                setMapPin(lat, lon, item.display_name.split(",").slice(0, 3).join(","));
+            } else {
+                alert("Location not found. Please click directly on the map.");
+            }
+        } catch (e) {
+            alert("Unable to search map location right now.");
+        } finally {
+            btn.innerHTML = `<i class="fa-solid fa-magnifying-glass"></i> Search`;
+            btn.disabled = false;
+        }
+    }
+
+    // GPS Locate Me
+    document.getElementById("getLocationBtn").addEventListener("click", function () {
+        const btn = this;
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser. Please click on the map.");
+            return;
+        }
+
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Locating...`;
+        btn.disabled = true;
+
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                setMapPin(lat, lng);
+                reverseGeocode(lat, lng);
+                btn.innerHTML = `<i class="fa-solid fa-location-crosshairs"></i> GPS Located`;
+                btn.disabled = false;
+            },
+            function (error) {
+                alert("GPS permission was denied or unavailable. Please click your location on the map.");
+                btn.innerHTML = `<i class="fa-solid fa-location-crosshairs"></i> Use GPS`;
+                btn.disabled = false;
+            },
+            { enableHighAccuracy: true, timeout: 8000 }
+        );
+    });
+
+    // -----------------------------------------------------------------
+    // 4. DRAG & DROP IMAGE UPLOAD WITH PREVIEW & GEMINI VISION VERIFICATION
+    // -----------------------------------------------------------------
+    const dropzone = document.getElementById("dropzone");
+    const imageInput = document.getElementById("imageInput");
+    const previewBox = document.getElementById("previewBox");
+    const previewThumbnail = document.getElementById("previewThumbnail");
+    const previewFileName = document.getElementById("previewFileName");
+    const previewFileSize = document.getElementById("previewFileSize");
+    const removeImgBtn = document.getElementById("removeImgBtn");
+    let isImageMismatch = false;
+
+    dropzone.addEventListener("click", () => imageInput.click());
+
+    dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("dragover");
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("dragover");
+    });
+
+    dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("dragover");
+        if (e.dataTransfer.files.length) {
+            handleImageFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    imageInput.addEventListener("change", () => {
+        if (imageInput.files.length) {
+            handleImageFile(imageInput.files[0]);
+        }
+    });
+
+    function handleImageFile(file) {
+        if (!file.type.match(/^image\/(jpeg|png|webp)$/)) {
+            alert("Please select a valid JPG, PNG, or WEBP image.");
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("File size exceeds 5 MB. Please choose a smaller file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewThumbnail.src = e.target.result;
+            previewFileName.textContent = file.name;
+            previewFileSize.textContent = (file.size / 1024).toFixed(1) + " KB";
+            dropzone.style.display = "none";
+            previewBox.style.display = "flex";
+
+            // Trigger Gemini Vision AI Verification
+            validateUploadedImage(file);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function validateUploadedImage(file) {
+        const box = document.getElementById("aiVisionVerificationBox");
+        const icon = document.getElementById("aiVisionIcon");
+        const status = document.getElementById("aiVisionStatus");
+        const badge = document.getElementById("aiVisionBadge");
+        const reason = document.getElementById("aiVisionReason");
+        const tags = document.getElementById("aiVisionTags");
+        const submitBtn = document.getElementById("submitBtn");
+        const errorAlert = document.getElementById("reportErrorAlert");
+
+        if (!file || !box) return;
+
+        // Reset to analyzing state
+        box.style.display = "block";
+        box.style.background = "#f0f9ff";
+        box.style.border = "1.5px solid #7dd3fc";
+        box.style.color = "#0369a1";
+
+        icon.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:#0284c7;"></i>`;
+        status.textContent = "Gemini AI Vision Analyzing Proof Photo...";
+        badge.style.background = "#e0f2fe";
+        badge.style.color = "#0369a1";
+        badge.style.border = "1px solid #bae6fd";
+        badge.textContent = "Analyzing Match";
+        reason.textContent = "Checking photographic evidence against reported civic category and description...";
+        tags.innerHTML = "";
+
+        const formData = new FormData();
+        formData.append("image", file);
+        formData.append("category", categoryInput.value);
+        formData.append("title", titleInput.value.trim());
+        formData.append("description", descInput.value.trim());
+
+        try {
+            const resp = await fetch("/api/ai/validate-image", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!resp.ok) {
+                // If API failed, allow proceeding without blocking
+                box.style.background = "#f8fafc";
+                box.style.border = "1px solid #e2e8f0";
+                box.style.color = "#475569";
+                icon.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i>`;
+                status.textContent = "Photo Attached";
+                badge.style.background = "#ecfdf5";
+                badge.style.color = "#047857";
+                badge.style.border = "1px solid #a7f3d0";
+                badge.textContent = "Attached";
+                reason.textContent = "Photo ready for submission.";
+                isImageMismatch = false;
+                submitBtn.disabled = false;
+                return;
+            }
+
+            const data = await resp.json();
+            const isMatch = data.is_match !== false;
+            const confidence = data.confidence || 0.7;
+
+            // Render detected element chips
+            tags.innerHTML = "";
+            if (data.detected_elements && data.detected_elements.length > 0) {
+                data.detected_elements.forEach(elem => {
+                    const chip = document.createElement("span");
+                    chip.style.cssText = "font-size:11px; padding:3px 8px; border-radius:6px; background:rgba(0,0,0,0.06); font-weight:600;";
+                    chip.textContent = elem;
+                    tags.appendChild(chip);
+                });
+            }
+
+            if (isMatch) {
+                // SUCCESS MATCH
+                isImageMismatch = false;
+                box.style.background = "#ecfdf5";
+                box.style.border = "1.5px solid #6ee7b7";
+                box.style.color = "#065f46";
+
+                icon.innerHTML = `<i class="fa-solid fa-circle-check" style="color:#10b981;"></i>`;
+                status.textContent = "Photo Verified Authentic: Matches " + (categoryInput.value || "Civic Issue");
+                badge.style.background = "#dcfce7";
+                badge.style.color = "#15803d";
+                badge.style.border = "1px solid #86efac";
+                badge.textContent = `Verified (${Math.round(confidence * 100)}%)`;
+                reason.textContent = data.reason || "Photo authentically corresponds to the reported civic problem.";
+
+                if (errorAlert) errorAlert.style.display = "none";
+                submitBtn.disabled = false;
+            } else {
+                // MISMATCH DETECTED
+                isImageMismatch = true;
+                box.style.background = "#fef2f2";
+                box.style.border = "1.5px solid #f87171";
+                box.style.color = "#991b1b";
+
+                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;"></i>`;
+                status.textContent = "Photo Mismatch Detected: Unrelated Image";
+                badge.style.background = "#fee2e2";
+                badge.style.color = "#b91c1c";
+                badge.style.border = "1px solid #fca5a5";
+                badge.textContent = "Mismatch Blocked";
+                reason.innerHTML = `<strong>${escapeHtml(data.reason || "Uploaded photo does not match the reported issue.")}</strong><br>Please upload an authentic photo of the civic problem, or click 'Remove' to proceed without photo evidence.`;
+
+                // Show alert banner
+                if (errorAlert) {
+                    const titleElem = document.getElementById("reportErrorTitle");
+                    const msgElem = document.getElementById("reportErrorMsg");
+                    if (titleElem) titleElem.textContent = "Image Verification Failed";
+                    if (msgElem) msgElem.textContent = (data.reason || "The uploaded image does not match the civic issue being reported.") + " Please attach a photo of the actual issue.";
+                    errorAlert.style.display = "flex";
+                }
+            }
+        } catch (err) {
+            console.error("Image validation error:", err);
+            isImageMismatch = false;
+            box.style.display = "none";
+        }
+    }
+
+    removeImgBtn.addEventListener("click", () => {
+        imageInput.value = "";
+        dropzone.style.display = "block";
+        previewBox.style.display = "none";
+        const box = document.getElementById("aiVisionVerificationBox");
+        if (box) box.style.display = "none";
+        const errorAlert = document.getElementById("reportErrorAlert");
+        if (errorAlert && errorAlert.style.display === "flex") {
+            errorAlert.style.display = "none";
+        }
+        isImageMismatch = false;
+        document.getElementById("submitBtn").disabled = false;
+    });
+
+    // -----------------------------------------------------------------
+    // 5. FORM SUBMISSION VALIDATION & LOADING STATE
+    // -----------------------------------------------------------------
+    document.getElementById("complaintForm").addEventListener("submit", function (e) {
+        if (!latInput.value || !lngInput.value) {
+            e.preventDefault();
+            alert("Please pin the incident location on the map before submitting.");
+            document.getElementById("map").scrollIntoView({ behavior: "smooth" });
+            return;
+        }
+
+        if (isImageMismatch) {
+            e.preventDefault();
+            alert("The uploaded photo does not match the reported civic issue. Please upload an authentic photo or click 'Remove' to submit without an image.");
+            document.getElementById("dropzone").scrollIntoView({ behavior: "smooth" });
+            return;
+        }
+
+        const submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Filing Grievance into Municipal Grid...`;
+    });
+
+
+    // =================================================================
+    // 6. GEMINI AI CHATBOT INTERACTIVE CONTROLLER
+    // =================================================================
+    const aiChatLauncher = document.getElementById("aiChatLauncher");
+    const aiChatDrawer = document.getElementById("aiChatDrawer");
+    const closeChatBtn = document.getElementById("closeChatBtn");
+    const clearChatBtn = document.getElementById("clearChatBtn");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const chatSendBtn = document.getElementById("chatSendBtn");
+    const chatTyping = document.getElementById("chatTyping");
+    const quickChipsContainer = document.getElementById("quickChipsContainer");
+    const openChatFromBanner = document.getElementById("openChatFromBanner");
+    const refineDescBtn = document.getElementById("refineDescBtn");
+    const sendContextBtn = document.getElementById("sendContextBtn");
+
+    let chatHistory = [];
+
+    // Toggle Chat Drawer
+    function toggleChat(open = null) {
+        const isOpen = open !== null ? open : !aiChatDrawer.classList.contains("open");
+        if (isOpen) {
+            aiChatDrawer.classList.add("open");
+            aiChatLauncher.style.display = "none";
+            chatInput.focus();
+        } else {
+            aiChatDrawer.classList.remove("open");
+            aiChatLauncher.style.display = "flex";
+        }
+    }
+
+    aiChatLauncher.addEventListener("click", () => toggleChat(true));
+    closeChatBtn.addEventListener("click", () => toggleChat(false));
+    openChatFromBanner.addEventListener("click", () => toggleChat(true));
+
+    // Clear Chat
+    clearChatBtn.addEventListener("click", () => {
+        chatHistory = [];
+        chatMessages.innerHTML = `
+            <div class="chat-msg bot-msg">
+                <div class="bot-avatar-mini"><i class="fa-solid fa-robot"></i></div>
+                <div class="msg-content">
+                    <div class="msg-bubble">
+                        <p>Conversation restarted! How can I help you with your civic issue today?</p>
+                    </div>
+                    <div class="msg-time">Just now</div>
+                </div>
+            </div>
+        `;
+    });
+
+    // Auto-expand textarea
+    chatInput.addEventListener("input", function() {
+        this.style.height = "auto";
+        this.style.height = (this.scrollHeight) + "px";
+    });
+
+    // Send on Enter (Shift+Enter for newline)
+    chatInput.addEventListener("keydown", function(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+
+    chatSendBtn.addEventListener("click", sendChatMessage);
+
+    // Quick Chips Click Handlers
+    quickChipsContainer.addEventListener("click", (e) => {
+        const chip = e.target.closest(".quick-chip");
+        if (!chip) return;
+        const prompt = chip.dataset.prompt;
+        if (prompt) {
+            chatInput.value = prompt;
+            sendChatMessage();
+        }
+    });
+
+    // Improve with Gemini Button (above description)
+    refineDescBtn.addEventListener("click", () => {
+        toggleChat(true);
+        const currentDesc = descInput.value.trim();
+        const currentTitle = titleInput.value.trim();
+        if (currentDesc || currentTitle) {
+            chatInput.value = `Please refine and improve my complaint for maximum urgency and clarity:\nTitle: "${currentTitle}"\nDescription: "${currentDesc}"`;
+        } else {
+            chatInput.value = "Help me write a clear, formal civic complaint description.";
+        }
+        sendChatMessage();
+    });
+
+    // Use Form Text context button
+    sendContextBtn.addEventListener("click", () => {
+        const currentDesc = descInput.value.trim();
+        const currentTitle = titleInput.value.trim();
+        const currentCat = categoryInput.value;
+        if (!currentTitle && !currentDesc) {
+            showToast("Enter a title or description in the form first!");
+            return;
+        }
+        chatInput.value = `Here is what I have so far. Please evaluate and refine it:\nCategory: ${currentCat}\nTitle: ${currentTitle}\nDescription: ${currentDesc}`;
+        sendChatMessage();
+    });
+
+    // Send Message Function
+    async function sendChatMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Append User Message to UI
+        appendMessage("user", message);
+        chatInput.value = "";
+        chatInput.style.height = "auto";
+        chatSendBtn.disabled = true;
+
+        // Show Typing Indicator
+        chatTyping.style.display = "flex";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Prepare Form Context
+        const context = {
+            category: categoryInput.value,
+            title: titleInput.value.trim(),
+            description: descInput.value.trim()
+        };
+
+        try {
+            const resp = await fetch("/api/ai/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    message: message,
+                    history: chatHistory,
+                    context: context
+                })
+            });
+
+            const data = await resp.json();
+            chatTyping.style.display = "none";
+            chatSendBtn.disabled = false;
+
+            if (data.success && data.reply) {
+                appendMessage("bot", data.reply, data.draft);
+
+                // Update history
+                chatHistory.push({ role: "user", text: message });
+                chatHistory.push({ role: "model", text: data.reply });
+
+                // Render dynamic suggested chips if returned
+                if (data.suggested_chips && data.suggested_chips.length > 0) {
+                    renderDynamicChips(data.suggested_chips);
+                }
+            } else {
+                appendMessage("bot", data.error || "I'm having trouble processing that right now. Please try again.");
+            }
+        } catch (err) {
+            chatTyping.style.display = "none";
+            chatSendBtn.disabled = false;
+            appendMessage("bot", "Unable to reach Gemini AI at the moment. Please check your network connection.");
+        }
+    }
+
+    // Append Message to UI
+    function appendMessage(role, text, draft = null) {
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `chat-msg ${role}-msg`;
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        let avatarHtml = "";
+        if (role === "bot") {
+            avatarHtml = `<div class="bot-avatar-mini"><i class="fa-solid fa-robot"></i></div>`;
+        }
+
+        let draftCardHtml = "";
+        if (draft && draft.title && draft.description) {
+            const draftJson = JSON.stringify(draft).replace(/"/g, '&quot;');
+            draftCardHtml = `
+                <div class="draft-action-card">
+                    <div class="draft-header">
+                        <span><i class="fa-solid fa-file-signature"></i> Suggested Grievance Draft</span>
+                        <span class="draft-category-badge">${escapeHtml(draft.category || "General")}</span>
+                    </div>
+                    <div class="draft-title-preview">${escapeHtml(draft.title)}</div>
+                    <div class="draft-desc-preview">${escapeHtml(draft.description)}</div>
+                    <button type="button" class="apply-draft-btn" data-draft="${draftJson}">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Apply to Complaint Form
+                    </button>
+                </div>
+            `;
+        }
+
+        msgDiv.innerHTML = `
+            ${avatarHtml}
+            <div class="msg-content">
+                <div class="msg-bubble">
+                    ${formatMarkdown(text)}
+                    ${draftCardHtml}
+                </div>
+                <div class="msg-time">${timeStr}</div>
+            </div>
+        `;
+
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Wire click handler for "Apply to Complaint Form" button
+        const applyBtn = msgDiv.querySelector(".apply-draft-btn");
+        if (applyBtn) {
+            applyBtn.addEventListener("click", function() {
+                try {
+                    const parsedDraft = JSON.parse(this.dataset.draft.replace(/&quot;/g, '"'));
+                    applyDraftToForm(parsedDraft, this);
+                } catch(e) {
+                    console.error("Apply draft error:", e);
+                }
+            });
+        }
+    }
+
+    // Apply Draft To Complaint Form
+    function applyDraftToForm(draft, btnElement = null) {
+        if (!draft) return;
+
+        // 1. Fill title & description
+        titleInput.value = draft.title || "";
+        descInput.value = draft.description || "";
+
+        // 2. Select category
+        if (draft.category) {
+            selectCategory(draft.category);
+        }
+
+        // 3. Highlight inputs with visual pulse
+        titleInput.classList.remove("field-highlighted");
+        descInput.classList.remove("field-highlighted");
+        void titleInput.offsetWidth; // trigger reflow
+        titleInput.classList.add("field-highlighted");
+        descInput.classList.add("field-highlighted");
+
+        // 4. Trigger live AI urgency meter
+        triggerAiAnalysis();
+
+        // 5. Update button state
+        if (btnElement) {
+            btnElement.classList.add("applied");
+            btnElement.innerHTML = `<i class="fa-solid fa-check"></i> Applied to Form!`;
+            btnElement.disabled = true;
+        }
+
+        // 6. Show Toast
+        showToast("✨ Applied AI draft to form! Review & pin location on map.");
+
+        // 7. Smoothly scroll form into view on mobile
+        if (window.innerWidth <= 650) {
+            toggleChat(false);
+        }
+        titleInput.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    // Render Dynamic Quick Chips
+    function renderDynamicChips(chips) {
+        if (!chips || !chips.length) return;
+        quickChipsContainer.innerHTML = "";
+        chips.forEach(chipText => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "quick-chip";
+            btn.dataset.prompt = chipText;
+            btn.innerHTML = `<i class="fa-regular fa-comment-dots"></i> ${escapeHtml(chipText)}`;
+            quickChipsContainer.appendChild(btn);
+        });
+    }
+
+    // Toast Notification Helper
+    function showToast(msg) {
+        const toast = document.getElementById("toastNotification");
+        const toastMsg = document.getElementById("toastMessage");
+        toastMsg.textContent = msg;
+        toast.classList.add("show");
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 4000);
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(text) {
+        if (!text) return "";
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Helper: Simple Markdown to HTML Formatter
+    function formatMarkdown(text) {
+        if (!text) return "";
+        let html = escapeHtml(text);
+
+        // Bold
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        // Italic
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        // Inline code
+        html = html.replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.06); padding:2px 6px; border-radius:4px; font-size:12px;">$1</code>');
+        
+        // Split paragraphs and handle bullet lists
+        const lines = html.split('\n');
+        let inList = false;
+        let result = [];
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('• ') || trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                if (!inList) {
+                    result.push('<ul>');
+                    inList = true;
+                }
+                result.push(`<li>${trimmed.substring(2)}</li>`);
+            } else if (/^\d+\.\s/.test(trimmed)) {
+                if (!inList) {
+                    result.push('<ol>');
+                    inList = true;
+                }
+                result.push(`<li>${trimmed.replace(/^\d+\.\s/, '')}</li>`);
+            } else {
+                if (inList) {
+                    result.push('</ul>');
+                    inList = false;
+                }
+                if (trimmed.length > 0) {
+                    result.push(`<p>${trimmed}</p>`);
+                }
+            }
+        });
+
+        if (inList) {
+            result.push('</ul>');
+        }
+
+        return result.join('');
+    }
+</script>
+
+</body>
+</html>

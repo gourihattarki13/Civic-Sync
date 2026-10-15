@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Sync — Register Account</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #0ea5e9;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --radius-lg: 18px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-md: 0 8px 30px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.14);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f8fafc;
+            display: flex;
+            color: var(--slate-800);
+        }
+
+        .register-layout {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* ================= LEFT HERO BANNER ================= */
+        .brand-hero {
+            width: 48%;
+            background: linear-gradient(135deg, #091a2f 0%, #0f2b48 50%, #173d63 100%);
+            color: white;
+            padding: 50px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.22) 0%, rgba(14, 165, 233, 0) 70%);
+            top: -120px;
+            left: -120px;
+            pointer-events: none;
+        }
+
+        .brand-hero::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.2) 0%, rgba(37, 99, 235, 0) 70%);
+            bottom: -150px;
+            right: -150px;
+            pointer-events: none;
+        }
+
+        .brand-top {
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-logo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .logo-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: white;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.35);
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            line-height: 1.1;
+        }
+
+        .logo-text span {
+            color: #38bdf8;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .ai-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #7dd3fc;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .hero-body {
+            position: relative;
+            z-index: 2;
+            margin: auto 0;
+            padding: 30px 0;
+        }
+
+        .hero-body h2 {
+            font-size: 34px;
+            font-weight: 800;
+            line-height: 1.25;
+            letter-spacing: -0.5px;
+            margin-bottom: 14px;
+        }
+
+        .hero-body h2 span {
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-body p {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.7;
+            margin-bottom: 26px;
+        }
+
+        .role-highlight-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .role-hl-box {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s;
+        }
+
+        .role-hl-box:hover {
+            background: rgba(255, 255, 255, 0.09);
+            transform: translateX(4px);
+        }
+
+        .role-hl-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(56, 189, 248, 0.18);
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .role-hl-text h4 {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 2px;
+        }
+
+        .role-hl-text p {
+            font-size: 11.5px;
+            color: #94a3b8;
+            margin-bottom: 0;
+            line-height: 1.4;
+        }
+
+        .hero-footer {
+            position: relative;
+            z-index: 2;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        /* ================= RIGHT FORM SECTION ================= */
+        .register-section {
+            width: 52%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 35px;
+            background: #f8fafc;
+            overflow-y: auto;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 520px;
+            background: white;
+            padding: 38px 36px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--slate-200);
+        }
+
+        .card-head {
+            margin-bottom: 22px;
+        }
+
+        .card-head h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 4px;
+        }
+
+        .card-head p {
+            font-size: 13px;
+            color: var(--slate-500);
+        }
+
+        /* ROLE SELECTOR CARDS */
+        .role-selector-container {
+            margin-bottom: 22px;
+        }
+
+        .role-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--slate-700);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .role-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .role-card {
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-md);
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            background: white;
+        }
+
+        .role-card:hover {
+            border-color: #93c5fd;
+            background: #fafcff;
+            transform: translateY(-2px);
+        }
+
+        .role-card.active {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .role-card-icon {
+            font-size: 20px;
+            margin-bottom: 6px;
+            color: var(--slate-600);
+            transition: color 0.2s;
+        }
+
+        .role-card.active .role-card-icon {
+            color: var(--primary);
+        }
+
+        .role-card h4 {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--slate-800);
+            margin-bottom: 2px;
+        }
+
+        .role-card.active h4 {
+            color: var(--primary-dark);
+        }
+
+        .role-card p {
+            font-size: 10px;
+            color: var(--slate-500);
+        }
+
+        /* FORM ELEMENTS */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--slate-700);
+            margin-bottom: 6px;
+        }
+
+        label .required {
+            color: var(--danger);
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrap i.field-icon {
+            position: absolute;
+            left: 13px;
+            color: var(--slate-400);
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .form-input, select.form-input {
+            width: 100%;
+            padding: 11px 14px 11px 38px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            color: var(--slate-800);
+            outline: none;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .form-input:focus + i.field-icon {
+            color: var(--primary);
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--slate-500);
+            margin-top: 4px;
+        }
+
+        /* CONDITIONAL PANELS */
+        .conditional-panel {
+            display: none;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 18px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .cond-title {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--slate-700);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* SUBMIT BUTTON */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            color: var(--slate-400);
+            font-size: 12px;
+        }
+
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--slate-200);
+        }
+
+        .auth-divider span { padding: 0 12px; }
+
+        .login-callout {
+            text-align: center;
+            font-size: 13px;
+            color: var(--slate-600);
+        }
+
+        .login-callout a {
+            color: var(--primary);
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .login-callout a:hover { text-decoration: underline; }
+
+        /* ALERT BOX */
+        .alert-box {
+            display: none;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        @media (max-width: 1000px) {
+            .register-layout { flex-direction: column; }
+            .brand-hero, .register-section { width: 100%; }
+            .brand-hero { padding: 40px 24px; min-height: 380px; }
+            .hero-body h2 { font-size: 26px; }
+            .register-section { padding: 30px 16px; }
+        }
+
+        @media (max-width: 550px) {
+            .role-cards-grid { grid-template-columns: 1fr; }
+            .form-grid-2 { grid-template-columns: 1fr; }
+            .register-card { padding: 26px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="register-layout">
+
+    <!-- ================= LEFT HERO BANNER ================= -->
+    <div class="brand-hero">
+
+        <div class="brand-top">
+            <div class="brand-logo-badge">
+                <div class="logo-box">
+                    <i class="fa-solid fa-city"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Civic<span>Sync</span></h1>
+                    <div class="logo-sub">Unified Civic Infrastructure</div>
+                </div>
+            </div>
+
+            <div class="ai-pill">
+                <i class="fa-solid fa-brain"></i>
+                <span>Real-Time AI Triage via Google Gemini</span>
+            </div>
+        </div>
+
+        <div class="hero-body">
+            <h2>Join the Network to <span>Empower Your City</span></h2>
+            <p>Whether you are a resident reporting a pothole or an official managing departmental dispatches, Civic Sync connects you directly to municipal action.</p>
+
+            <div class="role-highlight-grid">
+                <div class="role-hl-box">
+                    <div class="role-hl-icon"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="role-hl-text">
+                        <h4>Citizen Residents</h4>
+                        <p>File grievances with GPS & photos; track resolution history in real time.</p>
+                    </div>
+                </div>
+
+                <div class="role-hl-box">
+                    <div class="role-hl-icon" style="color:#f59e0b; background:rgba(245,158,11,0.18);"><i class="fa-solid fa-helmet-safety"></i></div>
+                    <div class="role-hl-text">
+                        <h4>Department Officials</h4>
+                        <p>Manage Road, Water, Sanitation, and Electrical repairs sorted by AI urgency.</p>
+                    </div>
+                </div>
+
+                <div class="role-hl-box">
+                    <div class="role-hl-icon" style="color:#a855f7; background:rgba(168,85,247,0.18);"><i class="fa-solid fa-landmark-flag"></i></div>
+                    <div class="role-hl-text">
+                        <h4>Municipal Administrators</h4>
+                        <p>City-wide oversight, Chart.js metrics, and departmental resolution auditing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-footer">
+            <span>&copy; 2026 Civic Sync Portal</span>
+            <span><i class="fa-solid fa-lock" style="color:#38bdf8;"></i> End-to-End Encrypted</span>
+        </div>
+
+    </div>
+
+    <!-- ================= RIGHT FORM SECTION ================= -->
+    <div class="register-section">
+
+        <div class="register-card">
+
+            <div class="card-head">
+                <h3>Create an Account</h3>
+                <p>Register as a Citizen, Department Official, or Administrator</p>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="registerAlert" class="alert-box alert-error"></div>
+
+            <form id="registerForm" method="POST" action="/register">
+
+                <!-- 1. INTERACTIVE ROLE SELECTOR -->
+                <div class="role-selector-container">
+                    <div class="role-label">
+                        <i class="fa-solid fa-user-shield" style="color:var(--primary);"></i>
+                        <span>I am registering as: <span class="required">*</span></span>
+                    </div>
+
+                    <div class="role-cards-grid">
+                        <div class="role-card active" id="roleCitizenCard" onclick="selectRole('citizen')">
+                            <div class="role-card-icon"><i class="fa-solid fa-user"></i></div>
+                            <h4>Citizen</h4>
+                            <p>Residents & Public</p>
+                        </div>
+
+                        <div class="role-card" id="roleDeptCard" onclick="selectRole('department')">
+                            <div class="role-card-icon"><i class="fa-solid fa-helmet-safety"></i></div>
+                            <h4>Department</h4>
+                            <p>Field Officials</p>
+                        </div>
+
+                        <div class="role-card" id="roleAdminCard" onclick="selectRole('admin')">
+                            <div class="role-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                            <h4>Admin</h4>
+                            <p>City Authority</p>
+                        </div>
+                    </div>
+
+                    <!-- Hidden role input -->
+                    <input type="hidden" name="role" id="roleInput" value="citizen" required>
+                </div>
+
+                <!-- 2. BASIC USER INFO -->
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-user field-icon"></i>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="e.g. Rahul Sharma" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address <span class="required">*</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-envelope field-icon"></i>
+                        <input type="email" id="email" name="email" class="form-input" placeholder="rahul@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-phone field-icon"></i>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="9876543210" maxlength="15">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pincode">Area PIN Code <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-map-pin field-icon"></i>
+                            <input type="text" id="pincode" name="pincode" class="form-input" placeholder="e.g. 400001" maxlength="10" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. CONDITIONAL DEPARTMENT OFFICIAL PANEL -->
+                <div class="conditional-panel deptGroup" id="deptPanel">
+                    <div class="cond-title">
+                        <i class="fa-solid fa-building-circle-check" style="color:var(--primary);"></i>
+                        <span>Department Verification Details</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="department_name">Assigned Department <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-layer-group field-icon"></i>
+                            <select id="department_name" name="department_name" class="form-input">
+                                <option value="">-- Choose Assigned Department --</option>
+                                <option value="Roads">Roads & Footpaths</option>
+                                <option value="Sanitation">Sanitation & Solid Waste</option>
+                                <option value="Water Supply">Water Supply & Pipelines</option>
+                                <option value="Electricity">Electricity & Streetlights</option>
+                                <option value="Drainage">Drainage & Sewage</option>
+                                <option value="Other">General Public Works</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="department_code">Department Official ID (Starts with DP) <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-id-badge field-icon"></i>
+                            <input type="text" id="department_code" name="department_code" class="form-input" placeholder="e.g. DP1001">
+                        </div>
+                        <div class="helper-text"><i class="fa-solid fa-circle-info"></i> Official security identifier issued by municipal headquarters.</div>
+                    </div>
+                </div>
+
+                <!-- 4. CONDITIONAL ADMIN SECURITY PANEL -->
+                <div class="conditional-panel" id="adminPanel">
+                    <div class="cond-title">
+                        <i class="fa-solid fa-key" style="color:var(--warning);"></i>
+                        <span>Municipal Administrator Security Clearance</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label for="admin_code">Admin Master Security Key (Starts with AD) <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="text" id="admin_code" name="admin_code" class="form-input" placeholder="e.g. AD001">
+                        </div>
+                        <div class="helper-text"><i class="fa-solid fa-triangle-exclamation"></i> Required to initialize an administrative command seat.</div>
+                    </div>
+                </div>
+
+                <!-- 5. PASSWORD & CONFIRMATION -->
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label for="password">Password <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" id="password" name="password" class="form-input" placeholder="Min 6 characters" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password <span class="required">*</span></label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-check-double field-icon"></i>
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-input" placeholder="Re-enter password" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT BUTTON -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span>Complete Registration</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+            <div class="login-callout">
+                Already registered?
+                <a href="/login">Sign In Here</a>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // ROLE SELECTION DYNAMICS
+    const roleInput = document.getElementById("roleInput");
+    const deptPanel = document.getElementById("deptPanel");
+    const adminPanel = document.getElementById("adminPanel");
+    const deptSelect = document.getElementById("department_name");
+    const deptCodeInput = document.getElementById("department_code");
+    const adminCodeInput = document.getElementById("admin_code");
+
+    function selectRole(role) {
+        document.querySelectorAll(".role-card").forEach(c => c.classList.remove("active"));
+        roleInput.value = role;
+
+        if (role === "citizen") {
+            document.getElementById("roleCitizenCard").classList.add("active");
+            deptPanel.style.display = "none";
+            adminPanel.style.display = "none";
+            deptSelect.required = false;
+            deptCodeInput.required = false;
+            adminCodeInput.required = false;
+        } else if (role === "department") {
+            document.getElementById("roleDeptCard").classList.add("active");
+            deptPanel.style.display = "block";
+            adminPanel.style.display = "none";
+            deptSelect.required = true;
+            deptCodeInput.required = true;
+            adminCodeInput.required = false;
+        } else if (role === "admin") {
+            document.getElementById("roleAdminCard").classList.add("active");
+            deptPanel.style.display = "none";
+            adminPanel.style.display = "block";
+            deptSelect.required = false;
+            deptCodeInput.required = false;
+            adminCodeInput.required = true;
+        }
+    }
+
+    // CHECK URL ERROR PARAMS
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get("error");
+    if (err) {
+        const alertBox = document.getElementById("registerAlert");
+        alertBox.textContent = decodeURIComponent(err);
+        alertBox.style.display = "block";
+    }
+
+    // FORM VALIDATION
+    document.getElementById("registerForm").addEventListener("submit", function (e) {
+        const pw = document.getElementById("password").value;
+        const confirmPw = document.getElementById("confirm_password").value;
+
+        if (pw !== confirmPw) {
+            e.preventDefault();
+            alert("Passwords do not match. Please verify.");
+            return;
+        }
+
+        const role = roleInput.value;
+        if (role === "department") {
+            const code = deptCodeInput.value.trim().toUpperCase();
+            if (!code.startsWith("DP")) {
+                e.preventDefault();
+                alert("Department Official ID must begin with DP (e.g. DP1001).");
+                return;
+            }
+        } else if (role === "admin") {
+            const code = adminCodeInput.value.trim().toUpperCase();
+            if (!code.startsWith("AD")) {
+                e.preventDefault();
+                alert("Admin Security Key must begin with AD (e.g. AD001).");
+                return;
+            }
+        }
+
+        const btn = document.getElementById("submitBtn");
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...`;
+    });
+</script>
+
+</body>
+</html>

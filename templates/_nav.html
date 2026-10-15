@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<nav class="ui-nav">
+    <a class="ui-brand" href="/"><i class="fa-solid fa-building-columns"></i><span>Civic Sync</span></a>
+    <div class="ui-links">
+        {% set role = session.get('role', 'citizen') %}
+        <a href="/" class="{{ 'on' if request.path in ('/dashboard', '/admin/dashboard', '/department/dashboard') }}"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        {% if role == 'citizen' %}
+        <a href="/report-issue" class="{{ 'on' if request.path == '/report-issue' }}"><i class="fa-solid fa-flag"></i> Report Issue <span style="font-size:10px; background:linear-gradient(135deg, #2563eb, #7c3aed); color:white; padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px;">AI</span></a>
+        <a href="/community-voting" class="{{ 'on' if request.path in ('/community-voting', '/vote-issues', '/vote') }}"><i class="fa-solid fa-fire" style="color:#ea580c;"></i> Community Voting <span style="font-size:10px; background:#ea580c; color:white; padding:1px 6px; border-radius:10px; font-weight:700; margin-left:4px;">VOTE</span></a>
+        <a href="/my-complaints" class="{{ 'on' if request.path == '/my-complaints' }}"><i class="fa-solid fa-list-check"></i> My Complaints</a>
+        <a href="/track-complaint" class="{{ 'on' if request.path.startswith('/track-complaint') }}"><i class="fa-solid fa-location-crosshairs"></i> Track</a>
+        {% endif %}
+        <span class="ui-user"><i class="fa-regular fa-circle-user"></i> {{ session.get('user_name', '') }}</span>
+        <a href="/logout" class="out"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+    </div>
+</nav>

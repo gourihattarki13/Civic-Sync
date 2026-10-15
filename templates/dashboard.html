@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Sync | Citizen Dashboard</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Leaflet CSS for Mini-Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #0ea5e9;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 20px -2px rgba(15,23,42,0.08);
+            --shadow-lg: 0 12px 30px -4px rgba(15,23,42,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: var(--slate-800);
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 24px 18px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0284c7, var(--primary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+        }
+
+        .brand-text h2 {
+            font-size: 19px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .brand-text span {
+            color: #38bdf8;
+        }
+
+        .brand-tag {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .menu-title {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(37,99,235,0.18);
+            color: #38bdf8;
+        }
+
+        .menu-item.active {
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(37,99,235,0.3);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 18px;
+        }
+
+        .help-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+        }
+
+        .help-pill h4 {
+            font-size: 12px;
+            color: white;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .help-pill p {
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .logout-btn {
+            color: #f87171 !important;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239,68,68,0.15) !important;
+            color: #fca5a5 !important;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 28px 36px 60px;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+
+        .page-title p {
+            font-size: 13px;
+            color: var(--slate-500);
+            margin-top: 3px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .city-pulse-pill {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-700);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse-dot 1.8s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0.5; }
+        }
+
+        .user-profile-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            padding: 6px 14px 6px 8px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .user-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-900);
+            line-height: 1.2;
+        }
+
+        .user-info span {
+            font-size: 11px;
+            color: var(--slate-400);
+        }
+
+        /* WELCOME BANNER */
+        .welcome-hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0284c7 100%);
+            border-radius: var(--radius-lg);
+            padding: 32px 36px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .welcome-hero::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: -50px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 1;
+            max-width: 580px;
+        }
+
+        .hero-greeting {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #93c5fd;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .hero-text h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .hero-text p {
+            font-size: 13.5px;
+            color: #e0ecff;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .hero-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 22px;
+            background: white;
+            color: var(--primary);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .hero-action-btn:hover {
+            background: #f8fafc;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .hero-illustration {
+            font-size: 90px;
+            opacity: 0.85;
+            color: white;
+            padding-right: 15px;
+        }
+
+        /* METRICS GRID */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+
+        .metric-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .metric-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--slate-500);
+        }
+
+        .metric-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .box-blue { background: #eff6ff; color: var(--primary); }
+        .box-amber { background: #fffbeb; color: var(--warning); }
+        .box-emerald { background: #ecfdf5; color: var(--success); }
+
+        .metric-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--slate-900);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .metric-footer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--slate-500);
+        }
+
+        /* TWO-COLUMN LAYOUT: MAP + RECENT COMPLAINTS */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .card-panel {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 18px 22px;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-title i { color: var(--primary); }
+
+        #dashboardMap {
+            width: 100%;
+            height: 340px;
+            z-index: 10;
+        }
+
+        /* RECENT COMPLAINTS LIST */
+        .complaints-scroll {
+            max-height: 340px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .complaint-item {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .complaint-item:hover {
+            background: var(--slate-50);
+            border-color: #cbd5e1;
+            transform: translateX(3px);
+        }
+
+        .complaint-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cat-icon-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 9px;
+            background: #f1f5f9;
+            color: var(--slate-700);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .complaint-meta h4 {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--slate-900);
+            margin-bottom: 3px;
+        }
+
+        .complaint-meta p {
+            font-size: 11.5px;
+            color: var(--slate-500);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .badge-reported { background: #dbeafe; color: #1e40af; }
+        .badge-review { background: #fef3c7; color: #92400e; }
+        .badge-progress { background: #ffedd5; color: #9a3412; }
+        .badge-resolved { background: #dcfce7; color: #166534; }
+
+        .track-link-btn {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .empty-placeholder {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--slate-400);
+        }
+
+        .empty-placeholder i {
+            font-size: 40px;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+        }
+
+        .empty-placeholder h4 {
+            font-size: 14px;
+            color: var(--slate-700);
+            margin-bottom: 6px;
+        }
+
+        /* ================= COMMUNITY VOTING SECTION ================= */
+        .community-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--slate-200);
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .community-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .community-header-left h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--slate-900);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .community-header-left p {
+            font-size: 12.5px;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        .community-filter-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .comm-filter-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #f8fafc;
+            color: var(--slate-600);
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .comm-filter-pill:hover, .comm-filter-pill.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 18px;
+        }
+
+        .issue-vote-card {
+            background: #ffffff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--radius-md);
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .issue-vote-card:hover {
+            transform: translateY(-3px);
+            border-color: #cbd5e1;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        }
+
+        .issue-vote-card.high-votes {
+            border-color: #fdba74;
+            background: linear-gradient(180deg, #fffbf5 0%, #ffffff 100%);
+        }
+
+        .vote-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .vote-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 4px;
+            line-height: 1.35;
+        }
+
+        .vote-card-desc {
+            font-size: 12.5px;
+            color: var(--slate-600);
+            line-height: 1.5;
+            margin-bottom: 14px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .vote-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+            margin-top: auto;
+        }
+
+        .vote-btn {
+            background: #fff7ed;
+            color: #ea580c;
+            border: 1.5px solid #fed7aa;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .vote-btn:hover {
+            background: #ffedd5;
+            border-color: #ea580c;
+            transform: scale(1.04);
+        }
+
+        .vote-btn.voted {
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 3px 12px rgba(234, 88, 12, 0.35);
+        }
+
+        .vote-btn.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes votePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.25); }
+            100% { transform: scale(1); }
+        }
+
+        .vote-pop {
+            animation: votePop 0.3s ease-out;
+        }
+
+        /* EMERGENCY HELPLINE TICKER */
+        .helpline-strip {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .helpline-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--slate-700);
+        }
+
+        .helpline-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #fef2f2;
+            color: var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        /* SIDEBAR OVERLAY */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 999;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-overlay.show {
+                display: block;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 20px;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-illustration {
+                display: none;
+            }
+            .city-pulse-pill {
+                display: none;
+            }
+        }
+
+        /* ================= PROFILE DROPDOWN ================= */
+        .profile-dropdown { position: relative; z-index: 1100; }
+        .user-profile-badge { cursor: pointer; font: inherit; text-align: left; }
+        .profile-arrow { font-size: 11px; color: #64748b; transition: transform 0.2s ease; }
+        .profile-dropdown.open .profile-arrow { transform: rotate(180deg); }
+
+        .profile-menu {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 340px;
+            max-width: calc(100vw - 30px);
+            max-height: calc(100vh - 110px);
+            overflow-y: auto;
+            background: #fff;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
+            z-index: 1200;
+            animation: menuIn 0.18s ease-out;
+        }
+        .profile-menu[hidden] { display: none !important; }
+        @keyframes menuIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+        .profile-cover {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #0ea5e9 100%);
+            padding: 22px 20px 18px;
+            color: white;
+            position: relative;
+        }
+        .profile-cover::after {
+            content: ''; position: absolute; right: -20px; top: -30px; width: 140px; height: 140px;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), rgba(255,255,255,0) 70%); border-radius: 50%;
+        }
+        .profile-cover-top { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+        .profile-avatar-large {
+            width: 54px; height: 54px; flex-shrink: 0; font-size: 21px;
+            background: white; color: var(--primary); box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        }
+        .profile-cover h4 { font-size: 16px; color: white; font-weight: 700; overflow-wrap: anywhere; }
+        .role-chip {
+            display: inline-block; margin-top: 4px; padding: 2px 10px; border-radius: 20px;
+            background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35);
+            font-size: 10.5px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase;
+        }
+        .city-chip {
+            position: relative; z-index: 1; margin-top: 14px; display: flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.28);
+            padding: 9px 12px; border-radius: 12px; font-size: 12.5px; font-weight: 600;
+            backdrop-filter: blur(6px);
+        }
+        .city-chip i { color: #fde68a; }
+        .city-chip.muted { font-weight: 500; color: #dbeafe; }
+
+        .profile-details { padding: 10px 14px 4px; }
+        .profile-detail {
+            display: flex; align-items: center; gap: 12px; padding: 10px 6px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .profile-detail:last-child { border-bottom: none; }
+        .pd-icon {
+            width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px;
+            background: #eff6ff; color: var(--primary);
+            display: flex; align-items: center; justify-content: center; font-size: 13px;
+        }
+        .pd-icon.green { background: #ecfdf5; color: #059669; }
+        .pd-icon.amber { background: #fffbeb; color: #d97706; }
+        .pd-icon.violet { background: #f5f3ff; color: #7c3aed; }
+        .pd-text { min-width: 0; }
+        .pd-label { display: block; font-size: 10.5px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px; font-weight: 600; }
+        .profile-detail strong { display: block; font-size: 13px; color: #1e293b; font-weight: 600; overflow-wrap: anywhere; margin-top: 1px; }
+        .profile-detail strong.missing { color: #94a3b8; font-weight: 500; font-style: italic; }
+
+        .profile-edit-btn {
+            width: calc(100% - 28px); margin: 6px 14px 14px; padding: 10px;
+            border: 1.5px dashed #93c5fd; background: #eff6ff; color: #1d4ed8;
+            border-radius: 10px; font-size: 12.5px; font-weight: 600; cursor: pointer;
+        }
+        .profile-edit-btn:hover { background: #dbeafe; }
+        .profile-edit-btn[hidden] { display: none !important; }
+
+        .profile-edit { padding: 4px 18px 16px; background: #f8fafc; border-top: 1px solid #e2e8f0; }
+        .profile-edit[hidden] { display: none !important; }
+        .profile-edit label { display: block; font-size: 11px; color: #64748b; margin: 12px 0 4px; font-weight: 600; }
+        .profile-edit input {
+            width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px;
+            font-size: 13px; background: white;
+        }
+        .profile-edit input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        .pin-preview { font-size: 12px; margin-top: 7px; min-height: 16px; font-weight: 600; color: #64748b; }
+        .pin-preview.ok { color: #059669; }
+        .pin-preview.bad { color: #dc2626; }
+        .profile-edit-actions { display: flex; gap: 8px; margin-top: 14px; }
+        .profile-edit-actions button {
+            flex: 1; padding: 10px; border-radius: 10px; font-size: 12.5px; font-weight: 600;
+            cursor: pointer; border: 1px solid #cbd5e1; background: white; color: #475569;
+        }
+        .profile-edit-actions button.primary { background: var(--primary); border-color: var(--primary); color: white; }
+        .profile-edit-msg { font-size: 11.5px; margin-top: 8px; min-height: 14px; }
+        .profile-edit-msg.error { color: #dc2626; }
+        .profile-edit-msg.ok { color: #059669; }
+
+        .profile-logout {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 14px 18px; color: #dc2626; font-size: 13px; font-weight: 600;
+            border-top: 1px solid #e2e8f0;
+        }
+        .profile-logout:hover { background: #fef2f2; }
+
+        @media (max-width: 480px) {
+            .profile-menu { right: -5px; }
+            .user-profile-badge { gap: 8px; padding-right: 10px; }
+            .user-info h4 { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-city"></i>
+            </div>
+            <div class="brand-text">
+                <h2>Civic<span>Sync</span></h2>
+                <div class="brand-tag">Citizen Portal</div>
+            </div>
+        </div>
+
+        <div class="menu-title">CITIZEN SERVICES</div>
+        <nav class="menu-list">
+            <a href="/dashboard" class="menu-item active">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/community-voting" class="menu-item">
+                <i class="fa-solid fa-fire" style="color: #ea580c;"></i>
+                <span>Community Voting</span>
+                <span style="background: linear-gradient(135deg, #ea580c, #f97316); color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto;">Escalate</span>
+            </a>
+            <a href="/report-issue" class="menu-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Report an Issue</span>
+                <span style="background: rgba(124,58,237,0.3); border: 1px solid #a855f7; color: #d8b4fe; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto;">AI Assistant</span>
+            </a>
+            <a href="/my-complaints" class="menu-item">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>My Complaints</span>
+            </a>
+            <a href="/track-complaint" class="menu-item">
+                <i class="fa-solid fa-location-crosshairs"></i>
+                <span>Track Complaint</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="help-pill">
+                <h4><i class="fa-solid fa-headset" style="color:#38bdf8;"></i> Citizen Support</h4>
+                <p>Municipal Help Desk: 1800-CIVIC-SYNC (Toll Free 24/7)</p>
+            </div>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1>Citizen Dashboard</h1>
+                    <p id="liveDateDisplay">Civic Issue Monitoring & Community Hub</p>
+                </div>
+            </div>
+
+            <div class="topbar-right">
+                <div class="city-pulse-pill">
+                    <span class="pulse-dot"></span>
+                    <span>City Grid: Operational</span>
+                </div>
+
+                <!-- PROFILE DROPDOWN -->
+                <div class="profile-dropdown" id="profileDropdown">
+
+                    <button type="button" class="user-profile-badge"
+                            id="profileTrigger"
+                            aria-expanded="false"
+                            aria-controls="profileMenu">
+
+                        <div class="user-avatar">{{ user_name[0] | upper if user_name else 'C' }}</div>
+
+                        <div class="user-info">
+                            <h4>{{ user_name | default('Citizen') }}</h4>
+                            <span>
+                                {{ session.get('role', 'Citizen') | title }}
+                                <span id="badgePin">{% if user_pincode or session.get('pincode') %}• PIN {{ user_pincode or session.get('pincode') }}{% endif %}</span>
+                            </span>
+                        </div>
+
+                        <i class="fa-solid fa-chevron-down profile-arrow"></i>
+                    </button>
+
+                    <div class="profile-menu" id="profileMenu" hidden>
+
+                        {% set phone_val = user_phone or session.get('phone') %}
+                        {% set pin_val = user_pincode or session.get('pincode') %}
+
+                        <div class="profile-cover">
+                            <div class="profile-cover-top">
+                                <div class="user-avatar profile-avatar-large">{{ user_name[0] | upper if user_name else 'C' }}</div>
+                                <div>
+                                    <h4>{{ user_name | default('Citizen') }}</h4>
+                                    <span class="role-chip">{{ session.get('role', 'Citizen') | title }}</span>
+                                </div>
+                            </div>
+                            <div class="city-chip muted" id="cityChip">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="cityLine">{% if pin_val %}Detecting your city...{% else %}Add your pincode to detect your city{% endif %}</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-details">
+
+                            <div class="profile-detail">
+                                <div class="pd-icon"><i class="fa-solid fa-envelope"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">Email</span>
+                                    <strong>{{ user_email or session.get('email') or 'Not available' }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-detail">
+                                <div class="pd-icon green"><i class="fa-solid fa-phone"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">Phone</span>
+                                    <strong id="profilePhoneText" class="{{ '' if phone_val else 'missing' }}">{{ phone_val or 'Not added yet' }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-detail">
+                                <div class="pd-icon amber"><i class="fa-solid fa-map-pin"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">Pincode</span>
+                                    <strong id="profilePinText" data-pin="{{ pin_val or '' }}" class="{{ '' if pin_val else 'missing' }}">{{ pin_val or 'Not added yet' }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="profile-detail">
+                                <div class="pd-icon violet"><i class="fa-solid fa-city"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">City &amp; State</span>
+                                    <strong id="profileCityText" class="missing">{% if pin_val %}Detecting...{% else %}Add pincode to detect{% endif %}</strong>
+                                </div>
+                            </div>
+
+                            {% if user_department_name or session.get('department_name') %}
+                            <div class="profile-detail">
+                                <div class="pd-icon"><i class="fa-solid fa-building"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">Department</span>
+                                    <strong>{{ user_department_name or session.get('department_name') }}</strong>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if user_official_id or session.get('official_id') %}
+                            <div class="profile-detail">
+                                <div class="pd-icon"><i class="fa-solid fa-id-card"></i></div>
+                                <div class="pd-text">
+                                    <span class="pd-label">Official ID</span>
+                                    <strong>{{ user_official_id or session.get('official_id') }}</strong>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                        <button type="button" class="profile-edit-btn" id="profileEditBtn">
+                            <i class="fa-solid fa-pen"></i> Edit phone &amp; pincode
+                        </button>
+
+                        <div class="profile-edit" id="profileEditForm" hidden>
+                            <label for="editPhone">Phone Number</label>
+                            <input type="tel" id="editPhone" maxlength="15" placeholder="e.g. 9876543210" value="{{ phone_val or '' }}">
+
+                            <label for="editPincode">Pincode</label>
+                            <input type="text" id="editPincode" maxlength="6" inputmode="numeric" placeholder="6-digit pincode" value="{{ pin_val or '' }}">
+                            <div class="pin-preview" id="pinPreview"></div>
+
+                            <div class="profile-edit-actions">
+                                <button type="button" id="profileCancelBtn">Cancel</button>
+                                <button type="button" class="primary" id="profileSaveBtn">Save</button>
+                            </div>
+                            <div class="profile-edit-msg" id="profileEditMsg"></div>
+                        </div>
+
+                        <a href="/logout" class="profile-logout"
+                           onclick="return confirm('Are you sure you want to log out?');">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- WELCOME HERO BANNER -->
+        <section class="welcome-hero">
+            <div class="hero-text">
+                <div class="hero-greeting" id="timeGreeting">Welcome Back</div>
+                <h2>Help Build a Smarter, Cleaner City</h2>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="/report-issue" class="hero-action-btn">
+                        <i class="fa-solid fa-plus-circle"></i>
+                        <span>File a New Grievance</span>
+                    </a>
+                    <a href="/community-voting" class="hero-action-btn" style="background: rgba(255,255,255,0.18); color: white; border: 1.5px solid rgba(255,255,255,0.45); backdrop-filter: blur(8px);">
+                        <i class="fa-solid fa-fire" style="color: #fed7aa;"></i>
+                        <span>Vote & Escalate Issues</span>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-illustration">
+                <i class="fa-solid fa-building-circle-check"></i>
+            </div>
+        </section>
+
+        <!-- GOOGLE GEMINI AI LIVE STATUS CARD -->
+        <section class="gemini-status-card" style="background: linear-gradient(135deg, #091a2f 0%, #0f2b48 100%); color: white; border-radius: 14px; padding: 18px 24px; margin-bottom: 26px; border: 1px solid rgba(56, 189, 248, 0.25); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 4px 20px rgba(9, 26, 47, 0.15);">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(56, 189, 248, 0.18); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 3px;">
+                        <h3 style="font-size: 15px; font-weight: 700; color: white;">Google Gemini Flash AI Active</h3>
+                        <span style="display: inline-flex; align-items: center; gap: 5px; background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase;">
+                            <span style="width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block;"></span> Connected
+                        </span>
+                    </div>
+                    <p style="font-size: 12px; color: #cbd5e1; margin: 0; line-height: 1.4;">Real-time semantic risk analysis, hazard detection, and rapid municipal crew dispatch recommendations.</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 16px;">
+                <div style="text-align: center; background: rgba(255,255,255,0.06); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size: 15px; font-weight: 800; color: #38bdf8;">&lt; 4 Hours</div>
+                    <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">Critical SLA</div>
+                </div>
+                <div style="text-align: center; background: rgba(255,255,255,0.06); padding: 8px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+                    <div style="font-size: 15px; font-weight: 800; color: #34d399;">100%</div>
+                    <div style="font-size: 10px; color: #94a3b8; text-transform: uppercase;">AI Triage</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- METRICS CARDS -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-top">
+                    <span class="metric-title">TOTAL COMPLAINTS</span>
+                    <div class="metric-icon-box box-blue">
+                        <i class="fa-solid fa-file-shield"></i>
+                    </div>
+                </div>
+                <div class="metric-number">{{ total_complaints | default(0) }}</div>
+                <div class="metric-footer">
+                    <i class="fa-solid fa-circle-info" style="color:var(--primary);"></i>
+                    <span>All grievances reported by you</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    <span class="metric-title">PENDING / IN PROGRESS</span>
+                    <div class="metric-icon-box box-amber">
+                        <i class="fa-solid fa-hourglass-half"></i>
+                    </div>
+                </div>
+                <div class="metric-number">{{ pending_complaints | default(0) }}</div>
+                <div class="metric-footer">
+                    <i class="fa-solid fa-clock-rotate-left" style="color:var(--warning);"></i>
+                    <span>Active departmental investigations</span>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-top">
+                    <span class="metric-title">RESOLVED ISSUES</span>
+                    <div class="metric-icon-box box-emerald">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <div class="metric-number">{{ resolved_complaints | default(0) }}</div>
+                <div class="metric-footer">
+                    <i class="fa-solid fa-award" style="color:var(--success);"></i>
+                    <span>Closed and verified by authorities</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- DASHBOARD GRID: MINI-MAP + RECENT ISSUES -->
+        <div class="dashboard-grid">
+
+            <!-- LEFT: INTERACTIVE LEAFLET MINI-MAP -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Your Reported Issues Map</span>
+                    </div>
+                    <span style="font-size:11.5px; color:var(--slate-400);"><i class="fa-solid fa-satellite"></i> Live Pins</span>
+                </div>
+                <div id="dashboardMap"></div>
+            </div>
+
+            <!-- RIGHT: RECENT COMPLAINTS TABLE -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>Recent Submissions</span>
+                    </div>
+                    <a href="/my-complaints" style="font-size:12.5px; font-weight:600; color:var(--primary);">
+                        View All ({{ total_complaints }}) &rarr;
+                    </a>
+                </div>
+
+                <div class="complaints-scroll">
+                    {% if recent_complaints and recent_complaints|length > 0 %}
+                        {% for c in recent_complaints %}
+                            <div class="complaint-item">
+                                <div class="complaint-left">
+                                    <div class="cat-icon-badge">
+                                        {% if 'road' in c.category|lower %}
+                                            <i class="fa-solid fa-road" style="color:#2563eb;"></i>
+                                        {% elif 'sanitat' in c.category|lower %}
+                                            <i class="fa-solid fa-trash-can" style="color:#10b981;"></i>
+                                        {% elif 'water' in c.category|lower %}
+                                            <i class="fa-solid fa-faucet-drip" style="color:#0ea5e9;"></i>
+                                        {% elif 'electr' in c.category|lower %}
+                                            <i class="fa-solid fa-bolt" style="color:#f59e0b;"></i>
+                                        {% elif 'drain' in c.category|lower %}
+                                            <i class="fa-solid fa-water" style="color:#6366f1;"></i>
+                                        {% else %}
+                                            <i class="fa-solid fa-circle-question" style="color:#64748b;"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="complaint-meta">
+                                        <h4>#{{ c.complaint_id }} - {{ c.title }}</h4>
+                                        <p>
+                                            <span><i class="fa-solid fa-tag"></i> {{ c.category }}</span>
+                                            <span>•</span>
+                                            <span><i class="fa-solid fa-location-dot"></i> {{ c.location[:25] }}...</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div style="text-align:right;">
+                                    {% if c.status == 'Resolved' %}
+                                        <span class="status-badge badge-resolved">Resolved</span>
+                                    {% elif c.status == 'In Progress' %}
+                                        <span class="status-badge badge-progress">In Progress</span>
+                                    {% elif c.status == 'Under Review' %}
+                                        <span class="status-badge badge-review">Under Review</span>
+                                    {% else %}
+                                        <span class="status-badge badge-reported">Reported</span>
+                                    {% endif %}
+                                    <div style="margin-top:6px;">
+                                        <a href="/track-complaint/{{ c.complaint_id }}" class="track-link-btn">
+                                            Track <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-placeholder">
+                            <i class="fa-regular fa-clipboard"></i>
+                            <h4>No Complaints Filed Yet</h4>
+                            <p style="font-size:12px; margin-bottom:15px;">You have not reported any civic issues in your area.</p>
+                            <a href="/report-issue" class="hero-action-btn" style="padding:8px 16px; font-size:12px;">
+                                <i class="fa-solid fa-plus"></i> Report First Issue
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- =======================================================
+             COMMUNITY ISSUES & CITIZEN DEMOCRATIC UPVOTING SECTION
+             ======================================================= -->
+        <section class="community-section" id="communitySection">
+            <div class="community-header">
+                <div class="community-header-left">
+                    <h3>
+                        <i class="fa-solid fa-people-group" style="color:var(--primary);"></i>
+                        Community Issues & Citizen Upvoting
+                        <span style="font-size:11px; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; padding:3px 10px; border-radius:20px; font-weight:700;">
+                            <i class="fa-solid fa-fire"></i> Democratic Escalation
+                        </span>
+                    </h3>
+                    <p>Endorse unresolved civic issues in your area. Problems with the highest citizen votes are automatically escalated to first dispatch priority!</p>
+                </div>
+
+                <div class="community-filter-row">
+                    <button class="comm-filter-pill active" onclick="filterCommunityIssues('all', this)">All ({{ community_complaints|length if community_complaints else 0 }})</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('top_voted', this)">🔥 Most Voted</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('Roads', this)">Roads</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('Water Supply', this)">Water</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('Electricity', this)">Electricity</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('Sanitation', this)">Sanitation</button>
+                    <button class="comm-filter-pill" onclick="filterCommunityIssues('Drainage', this)">Drainage</button>
+                    <a href="/community-voting" class="comm-filter-pill" style="background: linear-gradient(135deg, #ea580c, #f97316); color: white; border-color: #ea580c; text-decoration: none; font-weight: 700;">
+                        <i class="fa-solid fa-table-list"></i> Full Voting Page &rarr;
+                    </a>
+                </div>
+            </div>
+
+            <div class="community-grid" id="communityGrid">
+                {% if community_complaints and community_complaints|length > 0 %}
+                    {% for c in community_complaints %}
+                    <div class="issue-vote-card {% if c.upvotes_count >= 5 %}high-votes{% endif %}"
+                         data-category="{{ c.category }}"
+                         data-votes="{{ c.upvotes_count }}"
+                         id="commCard{{ c.complaint_id }}">
+                        <div>
+                            <div class="vote-card-top">
+                                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                    <span class="status-badge" style="background:#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe; font-size:11px;">
+                                        {{ c.category }}
+                                    </span>
+                                    {% if c.ai.priority_level == 'Critical' %}
+                                        <span class="status-badge" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; font-size:11px;">
+                                            <i class="fa-solid fa-radiation"></i> Critical Priority
+                                        </span>
+                                    {% elif c.ai.priority_level == 'High' %}
+                                        <span class="status-badge" style="background:#fffbeb; color:#b45309; border:1px solid #fde68a; font-size:11px;">
+                                            <i class="fa-solid fa-triangle-exclamation"></i> High Priority
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <span style="font-size:11.5px; color:#64748b; font-weight:700;">#{{ c.complaint_id }}</span>
+                            </div>
+
+                            <h4 class="vote-card-title">{{ c.title }}</h4>
+                            <p class="vote-card-desc">{{ c.description }}</p>
+
+                            <div style="font-size:11.5px; color:#64748b; margin-bottom:14px; display:flex; align-items:center; gap:6px;">
+                                <i class="fa-solid fa-location-dot" style="color:#ea580c;"></i>
+                                <span>{{ c.location }}</span>
+                            </div>
+                        </div>
+
+                        <div class="vote-card-footer">
+                            <button type="button"
+                                    class="vote-btn {% if c.has_voted %}voted{% endif %}"
+                                    id="voteBtn{{ c.complaint_id }}"
+                                    onclick="handleVoteClick({{ c.complaint_id }}, this)">
+                                <i class="fa-solid fa-fire"></i>
+                                <span class="vote-count-num" id="voteCount{{ c.complaint_id }}">{{ c.upvotes_count }}</span>
+                                <span class="vote-btn-text" id="voteLabel{{ c.complaint_id }}">{% if c.has_voted %}Upvoted (+1){% else %}Upvote Problem{% endif %}</span>
+                            </button>
+
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:11px; font-weight:700; color:#64748b;" id="urgencyBadge{{ c.complaint_id }}">
+                                    Score: {{ c.ai.urgency_score }}/100
+                                </span>
+                                <a href="/track-complaint/{{ c.complaint_id }}" class="track-link-btn">
+                                    Track <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div style="text-align:center; padding:36px 20px; grid-column:1/-1; color:#94a3b8;">
+                        <i class="fa-solid fa-circle-nodes" style="font-size:36px; margin-bottom:10px; color:#cbd5e1;"></i>
+                        <h4 style="font-size:14px; color:#475569; margin-bottom:4px;">No Community Issues Reported Yet</h4>
+                        <p style="font-size:12px;">Be the first citizen to report a grievance in your locality!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- MUNICIPAL EMERGENCY HELPLINES -->
+        <section class="helpline-strip">
+            <div class="helpline-item">
+                <div class="helpline-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                <div>
+                    <div style="font-size:10px; color:var(--slate-400); text-transform:uppercase;">Municipal Control</div>
+                    <div>1800-CIVIC-SYNC</div>
+                </div>
+            </div>
+
+            <div class="helpline-item">
+                <div class="helpline-icon" style="background:#eff6ff; color:var(--primary);"><i class="fa-solid fa-bolt"></i></div>
+                <div>
+                    <div style="font-size:10px; color:var(--slate-400); text-transform:uppercase;">Electrical Grid Emergency</div>
+                    <div>1912 (24x7 Helpline)</div>
+                </div>
+            </div>
+
+            <div class="helpline-item">
+                <div class="helpline-icon" style="background:#ecfdf5; color:var(--success);"><i class="fa-solid fa-faucet-drip"></i></div>
+                <div>
+                    <div style="font-size:10px; color:var(--slate-400); text-transform:uppercase;">Water Pipeline Control</div>
+                    <div>1916 (Emergency)</div>
+                </div>
+            </div>
+
+            <div class="helpline-item">
+                <div class="helpline-icon" style="background:#fffbeb; color:var(--warning);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div>
+                    <div style="font-size:10px; color:var(--slate-400); text-transform:uppercase;">Drainage & Flood Hazard</div>
+                    <div>1077 (Disaster Cell)</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // 1. DYNAMIC TIME-BASED GREETING & DATE
+    const hour = new Date().getHours();
+    const timeGreeting = document.getElementById("timeGreeting");
+    if (hour < 12) {
+        timeGreeting.textContent = "Good Morning ☀️";
+    } else if (hour < 18) {
+        timeGreeting.textContent = "Good Afternoon 🌤️";
+    } else {
+        timeGreeting.textContent = "Good Evening 🌙";
+    }
+
+    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+    document.getElementById("liveDateDisplay").textContent = "Today is " + new Date().toLocaleDateString("en-US", options);
+
+    // 2. MOBILE SIDEBAR TOGGLE
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    menuToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("show");
+    });
+
+    overlay.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+    });
+
+    // 3. DASHBOARD LEAFLET MINI-MAP
+    const complaintsData = {{ recent_complaints_json | safe if recent_complaints_json else '[]' }};
+    const defaultCenter = [16.7, 74.46];
+
+    const dashMap = L.map("dashboardMap").setView(defaultCenter, 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(dashMap);
+
+    if (complaintsData && complaintsData.length > 0) {
+        const markers = [];
+        complaintsData.forEach(c => {
+            if (c.latitude && c.longitude) {
+                const marker = L.marker([c.latitude, c.longitude]).addTo(dashMap);
+                const votesTag = (c.upvotes_count > 0)
+                    ? `<span style="display:inline-block; background:#fff7ed; color:#ea580c; border:1px solid #fed7aa; padding:2px 7px; border-radius:10px; font-size:10px; font-weight:700; margin-top:4px;"><i class="fa-solid fa-fire"></i> ${c.upvotes_count} Citizen Votes</span>`
+                    : '';
+                const myTag = c.is_mine
+                    ? `<span style="font-size:10px; background:#eff6ff; color:#1d4ed8; padding:1px 6px; border-radius:6px; font-weight:600; margin-left:6px;">Your Report</span>`
+                    : '';
+
+                marker.bindPopup(`
+                    <div style="font-family:'Poppins',sans-serif; min-width:200px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="font-size:11px; font-weight:700; color:#64748b;">#${c.complaint_id}</span>
+                            ${myTag}
+                        </div>
+                        <b style="color:#0f172a; font-size:13px; line-height:1.3; display:block;">${c.title}</b>
+                        <div style="font-size:11px; color:#64748b; margin:4px 0;">${c.category} • Status: <b>${c.status}</b></div>
+                        ${votesTag}
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px; padding-top:6px; border-top:1px solid #f1f5f9;">
+                            <a href="/track-complaint/${c.complaint_id}" style="font-size:11.5px; font-weight:700; color:#2563eb; text-decoration:none;">Track &rarr;</a>
+                            <button type="button" onclick="handleVoteClick(${c.complaint_id})" style="background:#ea580c; color:white; border:none; padding:3px 8px; border-radius:6px; font-size:10.5px; font-weight:700; cursor:pointer;">
+                                <i class="fa-solid fa-thumbs-up"></i> Vote
+                            </button>
+                        </div>
+                    </div>
+                `);
+                markers.push([c.latitude, c.longitude]);
+            }
+        });
+
+        if (markers.length > 0) {
+            const bounds = L.latLngBounds(markers);
+            dashMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+        }
+    }
+
+    // 4. DEMOCRATIC CITIZEN UPVOTING HANDLER
+    async function handleVoteClick(complaintId, btnElement = null) {
+        const btn = btnElement || document.getElementById(`voteBtn${complaintId}`);
+        if (btn) btn.classList.add('loading');
+
+        try {
+            const resp = await fetch(`/api/complaints/${complaintId}/vote`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await resp.json();
+            if (btn) btn.classList.remove('loading');
+
+            if (!resp.ok || !data.success) {
+                alert(data.error || 'Please login to vote on civic issues.');
+                return;
+            }
+
+            // Update UI elements
+            const countEl = document.getElementById(`voteCount${complaintId}`);
+            const labelEl = document.getElementById(`voteLabel${complaintId}`);
+            const badgeEl = document.getElementById(`urgencyBadge${complaintId}`);
+            const cardEl = document.getElementById(`commCard${complaintId}`);
+
+            if (countEl) countEl.textContent = data.upvotes_count;
+            if (labelEl) labelEl.textContent = data.voted ? 'Upvoted (+1)' : 'Upvote Problem';
+            if (badgeEl && data.ai_urgency) badgeEl.textContent = `Score: ${data.ai_urgency}/100`;
+
+            if (btn) {
+                btn.classList.toggle('voted', data.voted);
+                btn.classList.add('vote-pop');
+                setTimeout(() => btn.classList.remove('vote-pop'), 400);
+            }
+
+            if (cardEl) {
+                cardEl.setAttribute('data-votes', data.upvotes_count);
+                if (data.upvotes_count >= 5) {
+                    cardEl.classList.add('high-votes');
+                } else {
+                    cardEl.classList.remove('high-votes');
+                }
+            }
+
+            // Show Toast Notification
+            showToast(data.voted
+                ? `🔥 Issue upvoted! Priority escalated to ${data.priority_level} in municipal grid.`
+                : 'Vote removed.'
+            );
+
+        } catch (err) {
+            if (btn) btn.classList.remove('loading');
+            console.error('Vote error:', err);
+            showToast('Unable to process vote right now.');
+        }
+    }
+
+    // 5. COMMUNITY ISSUES CATEGORY FILTER
+    function filterCommunityIssues(category, btn) {
+        document.querySelectorAll('.comm-filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const cards = document.querySelectorAll('.issue-vote-card');
+        cards.forEach(card => {
+            const cardCat = card.getAttribute('data-category');
+            const votes = parseInt(card.getAttribute('data-votes') || '0');
+
+            if (category === 'all') {
+                card.style.display = 'flex';
+            } else if (category === 'top_voted') {
+                card.style.display = (votes > 0) ? 'flex' : 'none';
+            } else {
+                card.style.display = (cardCat && cardCat.toLowerCase().includes(category.toLowerCase())) ? 'flex' : 'none';
+            }
+        });
+    }
+
+    // 6. FLOATING TOAST HELPER
+    function showToast(msg) {
+        let toast = document.getElementById('dashToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'dashToast';
+            toast.style.cssText = 'position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-100px); background:#0f172a; color:white; padding:12px 24px; border-radius:30px; font-size:13px; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.25); z-index:99999; transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); display:flex; align-items:center; gap:10px; border:1px solid rgba(255,255,255,0.15);';
+            document.body.appendChild(toast);
+        }
+        toast.innerHTML = `<i class="fa-solid fa-fire" style="color:#ea580c;"></i> <span>${msg}</span>`;
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(-100px)';
+        }, 3500);
+    }
+
+
+    // 7. PROFILE DROPDOWN
+    const profileDropdown = document.getElementById("profileDropdown");
+    const profileTrigger = document.getElementById("profileTrigger");
+    const profileMenu = document.getElementById("profileMenu");
+
+    if (profileDropdown && profileTrigger && profileMenu) {
+        profileTrigger.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const opening = profileMenu.hidden;
+            profileMenu.hidden = !opening;
+            profileDropdown.classList.toggle("open", opening);
+            profileTrigger.setAttribute("aria-expanded", String(opening));
+        });
+
+        document.addEventListener("click", function (event) {
+            if (!profileDropdown.contains(event.target)) {
+                profileMenu.hidden = true;
+                profileDropdown.classList.remove("open");
+                profileTrigger.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                profileMenu.hidden = true;
+                profileDropdown.classList.remove("open");
+                profileTrigger.setAttribute("aria-expanded", "false");
+            }
+        });
+    }
+
+    // 8. PINCODE -> CITY LOOKUP (India Post data via api.postalpincode.in, cached in the browser)
+    const PIN_CACHE_KEY = "civicsync_pin_cache_v1";
+
+    function readPinCache() {
+        try { return JSON.parse(localStorage.getItem(PIN_CACHE_KEY) || "{}"); } catch (e) { return {}; }
+    }
+    function writePinCache(cache) {
+        try { localStorage.setItem(PIN_CACHE_KEY, JSON.stringify(cache)); } catch (e) {}
+    }
+
+    // Returns {city, state, area} | {notFound:true} | null (network error)
+    async function lookupPincode(pin) {
+        if (!/^\d{6}$/.test(pin)) return null;
+        const cache = readPinCache();
+        if (cache[pin]) return cache[pin];
+        try {
+            const resp = await fetch("https://api.postalpincode.in/pincode/" + pin);
+            const json = await resp.json();
+            const entry = Array.isArray(json) ? json[0] : null;
+            if (!entry || entry.Status !== "Success" || !entry.PostOffice || !entry.PostOffice.length) {
+                return { notFound: true };
+            }
+            const po = entry.PostOffice[0];
+            const result = {
+                city: po.District || po.Block || po.Name,
+                state: po.State || "",
+                area: po.Name || ""
+            };
+            cache[pin] = result;
+            writePinCache(cache);
+            return result;
+        } catch (err) {
+            console.error("Pincode lookup failed:", err);
+            return null;
+        }
+    }
+
+    function showLocation(info, pin) {
+        const cityLine = document.getElementById("cityLine");
+        const cityChip = document.getElementById("cityChip");
+        const cityText = document.getElementById("profileCityText");
+        const badge = document.getElementById("badgePin");
+
+        if (!pin) {
+            cityLine.textContent = "Add your pincode to detect your city";
+            cityChip.classList.add("muted");
+            cityText.textContent = "Add pincode to detect";
+            cityText.classList.add("missing");
+            badge.textContent = "";
+            return;
+        }
+        if (info && info.city) {
+            const full = info.state ? info.city + ", " + info.state : info.city;
+            cityLine.textContent = full;
+            cityChip.classList.remove("muted");
+            cityText.textContent = full;
+            cityText.classList.remove("missing");
+            badge.textContent = "• " + info.city;
+        } else {
+            const msg = (info && info.notFound) ? "City not found for this pincode" : "Could not detect city right now";
+            cityLine.textContent = msg;
+            cityChip.classList.add("muted");
+            cityText.textContent = msg;
+            cityText.classList.add("missing");
+            badge.textContent = "• PIN " + pin;
+        }
+    }
+
+    async function refreshLocation(pin) {
+        if (!pin) { showLocation(null, ""); return; }
+        showLocation({ city: "" }, pin);
+        document.getElementById("cityLine").textContent = "Detecting your city...";
+        const info = await lookupPincode(pin);
+        showLocation(info, pin);
+    }
+
+    // Run once on page load with the saved pincode
+    refreshLocation(document.getElementById("profilePinText").dataset.pin || "");
+
+    // 9. PROFILE EDIT (phone & pincode, with live city preview)
+    const editBtn = document.getElementById("profileEditBtn");
+    const editForm = document.getElementById("profileEditForm");
+    const saveBtn = document.getElementById("profileSaveBtn");
+    const cancelBtn = document.getElementById("profileCancelBtn");
+    const editMsg = document.getElementById("profileEditMsg");
+    const pinInput = document.getElementById("editPincode");
+    const pinPreview = document.getElementById("pinPreview");
+    let pinTimer = null;
+
+    function setMissing(el, value) {
+        el.textContent = value || "Not added yet";
+        el.classList.toggle("missing", !value);
+    }
+
+    async function previewPin() {
+        const pin = pinInput.value.trim();
+        pinPreview.className = "pin-preview";
+        if (!pin) { pinPreview.textContent = ""; return; }
+        if (!/^\d{6}$/.test(pin)) { pinPreview.textContent = "Enter all 6 digits"; return; }
+        pinPreview.textContent = "Checking...";
+        const info = await lookupPincode(pin);
+        if (pinInput.value.trim() !== pin) return; // user kept typing
+        if (info && info.city) {
+            pinPreview.className = "pin-preview ok";
+            pinPreview.textContent = "✓ " + info.city + (info.state ? ", " + info.state : "");
+        } else if (info && info.notFound) {
+            pinPreview.className = "pin-preview bad";
+            pinPreview.textContent = "No city found for this pincode";
+        } else {
+            pinPreview.textContent = "Could not check right now";
+        }
+    }
+
+    if (editBtn && editForm) {
+        pinInput.addEventListener("input", () => {
+            pinInput.value = pinInput.value.replace(/\D/g, "");
+            clearTimeout(pinTimer);
+            pinTimer = setTimeout(previewPin, 300);
+        });
+
+        editBtn.addEventListener("click", () => {
+            editForm.hidden = false;
+            editBtn.hidden = true;
+            editMsg.textContent = "";
+            previewPin();
+            document.getElementById("editPhone").focus();
+        });
+
+        cancelBtn.addEventListener("click", () => {
+            editForm.hidden = true;
+            editBtn.hidden = false;
+        });
+
+        saveBtn.addEventListener("click", async () => {
+            const phone = document.getElementById("editPhone").value.trim();
+            const pincode = pinInput.value.trim();
+
+            saveBtn.disabled = true;
+            editMsg.className = "profile-edit-msg";
+            editMsg.textContent = "Saving...";
+
+            try {
+                const resp = await fetch("/api/profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ phone, pincode })
+                });
+                const data = await resp.json();
+
+                if (!resp.ok || !data.success) {
+                    editMsg.className = "profile-edit-msg error";
+                    editMsg.textContent = data.error || "Could not save changes.";
+                } else {
+                    setMissing(document.getElementById("profilePhoneText"), data.phone);
+                    const pinEl = document.getElementById("profilePinText");
+                    setMissing(pinEl, data.pincode);
+                    pinEl.dataset.pin = data.pincode || "";
+                    refreshLocation(data.pincode || "");
+                    editMsg.className = "profile-edit-msg ok";
+                    editMsg.textContent = "Profile updated.";
+                    setTimeout(() => {
+                        editForm.hidden = true;
+                        editBtn.hidden = false;
+                    }, 900);
+                }
+            } catch (err) {
+                editMsg.className = "profile-edit-msg error";
+                editMsg.textContent = "Network error. Please try again.";
+            } finally {
+                saveBtn.disabled = false;
+            }
+        });
+    }
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+/* Civic Sync - shared UI layer (loaded after each page's own styles).
+   Uses the individual `translate` property for motion so it never clashes
+   with any `transform` already set by a page. */
+:root{--ui-blue:#2563eb;--ui-indigo:#4f46e5;--ui-cyan:#06b6d4;--ui-ease:cubic-bezier(.22,1,.36,1)}
+html{scroll-behavior:smooth}
+body{font-family:Inter,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;-webkit-font-smoothing:antialiased;animation:uiFade .6s ease both}
+@keyframes uiFade{from{opacity:0}to{opacity:1}}
+::selection{background:#bfdbfe}
+
+/* scroll progress bar */
+#ui-progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:10000;background:linear-gradient(90deg,var(--ui-blue),var(--ui-cyan),var(--ui-indigo));box-shadow:0 0 10px rgba(37,99,235,.6);transition:width .12s linear}
+
+/* entrance animation (classes added by ui.js) */
+.ui-reveal{opacity:0;translate:0 22px;transition:opacity .7s var(--ui-ease),translate .7s var(--ui-ease)}
+.ui-reveal.ui-in{opacity:1;translate:0 0}
+
+/* cards: lift + glow */
+.stat-card,.kpi-card,.action-card,.complaint-card,.feature,.card,.role-card,.map-section{transition:translate .35s var(--ui-ease),box-shadow .35s ease,background-color .3s ease,border-color .3s ease}
+.stat-card:hover,.kpi-card:hover,.action-card:hover,.complaint-card:hover,.role-card:hover{translate:0 -5px;box-shadow:0 22px 44px -14px rgba(37,99,235,.30)}
+.card:hover{box-shadow:0 14px 34px -14px rgba(15,23,42,.22)}
+.stat-icon,.kpi-icon,.action-icon{transition:scale .35s var(--ui-ease),rotate .35s var(--ui-ease)}
+.stat-card:hover .stat-icon,.kpi-card:hover .kpi-icon,.action-card:hover .action-icon{scale:1.14;rotate:-6deg}
+.action-arrow{transition:translate .3s var(--ui-ease)}
+.action-card:hover .action-arrow{translate:6px 0}
+.stat-number,.kpi-number{font-variant-numeric:tabular-nums}
+
+/* sidebar + table polish */
+.menu-item{transition:translate .25s var(--ui-ease),background-color .25s,color .25s}
+.menu-item:hover{translate:4px 0}
+tbody tr{transition:background-color .2s}
+tbody tr:hover{background:#eff6ff}
+
+/* inputs */
+input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--ui-blue)!important;box-shadow:0 0 0 4px rgba(37,99,235,.16)!important}
+input,select,textarea{transition:box-shadow .25s,border-color .25s}
+.input-group i{transition:color .25s,scale .25s var(--ui-ease)}
+.input-group:focus-within i{color:var(--ui-blue);scale:1.15}
+
+/* buttons: lift, shine, ripple, loading */
+button[type=submit],.submit-btn,.btn-update-status,.btn-action,.track-btn,.gps-btn{position:relative;overflow:hidden;transition:translate .25s var(--ui-ease),box-shadow .25s,filter .25s}
+button[type=submit]:hover,.submit-btn:hover,.btn-update-status:hover,.btn-action:hover,.track-btn:hover,.gps-btn:hover{translate:0 -2px;box-shadow:0 12px 24px -8px rgba(37,99,235,.55);filter:brightness(1.06)}
+button[type=submit]:active,.submit-btn:active{translate:0 0;box-shadow:none}
+.ui-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);pointer-events:none;scale:0;animation:uiRipple .65s ease-out forwards}
+@keyframes uiRipple{to{scale:4;opacity:0}}
+.ui-loading{pointer-events:none;opacity:.85}
+.ui-loading::after{content:"";display:inline-block;width:14px;height:14px;margin-left:10px;vertical-align:-2px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:uiSpin .7s linear infinite}
+@keyframes uiSpin{to{rotate:360deg}}
+
+/* login / register hero panel */
+.ui-spot{position:absolute;inset:0;pointer-events:none;z-index:1;background:radial-gradient(520px circle at var(--mx,30%) var(--my,25%),rgba(255,255,255,.16),transparent 45%);transition:opacity .4s}
+.building{animation:uiFloat 7s ease-in-out infinite alternate}
+.b2{animation-delay:-1.2s}.b3{animation-delay:-2.4s}.b4{animation-delay:-3.6s}.b5{animation-delay:-4.8s}.b6{animation-delay:-6s}
+@keyframes uiFloat{to{translate:0 -10px}}
+.brand-icon{animation:uiGlow 3.2s ease-in-out infinite}
+@keyframes uiGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 0 0 16px rgba(255,255,255,0)}}
+.feature:hover{background:rgba(255,255,255,.18);translate:0 -4px}
+.navigation span{transition:background-color .5s,color .5s,scale .5s var(--ui-ease)}
+.navigation span.ui-hl{scale:1.08;background:rgba(255,255,255,.28)!important;color:#fff}
+
+/* password strength */
+.ui-strength{margin:-4px 0 14px;font-size:12px;color:#64748b}
+.ui-strength .bars{display:flex;gap:5px;margin-bottom:4px}
+.ui-strength .bars i{flex:1;height:5px;border-radius:4px;background:#e2e8f0;transition:background-color .3s}
+.ui-strength[data-s="1"] .bars i:nth-child(-n+1){background:#ef4444}
+.ui-strength[data-s="2"] .bars i:nth-child(-n+2){background:#f59e0b}
+.ui-strength[data-s="3"] .bars i:nth-child(-n+3){background:#22c55e}
+.ui-strength[data-s="4"] .bars i{background:#16a34a}
+.ui-match-ok{border-color:#22c55e!important}.ui-match-bad{border-color:#ef4444!important}
+
+/* pulsing urgency + notification */
+.notification-dot,.ai-critical,.ai-pill.critical,.badge.critical{animation:uiPulse 2s ease-in-out infinite}
+@keyframes uiPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.45)}50%{box-shadow:0 0 0 7px rgba(239,68,68,0)}}
+
+/* topbar clock chip */
+.ui-clock{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:#eff6ff;color:#1d4ed8;font-size:13px;font-weight:600;white-space:nowrap}
+@media(max-width:900px){.ui-clock{display:none}}
+
+/* top navigation (pages without a sidebar) */
+.ui-nav{position:sticky;top:0;z-index:900;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 28px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(148,163,184,.25);box-shadow:0 6px 24px -16px rgba(15,23,42,.4)}
+.ui-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:#1e293b;text-decoration:none}
+.ui-brand i{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:#fff;background:linear-gradient(135deg,var(--ui-blue),var(--ui-indigo))}
+.ui-links{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ui-links a{position:relative;padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;color:#475569;text-decoration:none;transition:background-color .2s,color .2s}
+.ui-links a:hover{background:#eff6ff;color:var(--ui-blue)}
+.ui-links a.on{background:linear-gradient(135deg,var(--ui-blue),var(--ui-indigo));color:#fff}
+.ui-links a.out{color:#dc2626}.ui-links a.out:hover{background:#fef2f2}
+.ui-user{font-size:13px;color:#64748b;margin-right:6px}
+@media(max-width:700px){.ui-nav{padding:10px 14px}.ui-user{display:none}.ui-links a{padding:7px 10px;font-size:13px}.ui-brand span{display:none}}
+
+/* plain pages get a friendlier backdrop and headings */
+body.ui-plain{background:linear-gradient(160deg,#eef2ff 0%,#f8fafc 45%,#ecfeff 100%) fixed!important}
+body.ui-plain h1{background:linear-gradient(90deg,var(--ui-blue),var(--ui-indigo));-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.status{transition:scale .2s}.status:hover{scale:1.06}
+
+/* toasts */
+#ui-toasts{position:fixed;top:18px;right:18px;z-index:10001;display:flex;flex-direction:column;gap:10px;max-width:min(380px,calc(100vw - 36px))}
+.ui-toast{position:relative;overflow:hidden;display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border-radius:14px;background:#fff;color:#1e293b;font-size:14px;font-weight:600;box-shadow:0 18px 40px -12px rgba(15,23,42,.35);border-left:5px solid var(--ui-blue);animation:uiToastIn .5s var(--ui-ease) both}
+.ui-toast.success{border-color:#16a34a}.ui-toast.error{border-color:#dc2626}
+.ui-toast.success>i{color:#16a34a}.ui-toast.error>i{color:#dc2626}.ui-toast>i{color:var(--ui-blue);margin-top:2px}
+.ui-toast::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:100%;background:currentColor;opacity:.25;transform-origin:left;animation:uiBar var(--t,4.5s) linear forwards}
+.ui-toast.out{animation:uiToastOut .35s ease forwards}
+@keyframes uiToastIn{from{opacity:0;translate:40px 0}to{opacity:1;translate:0 0}}
+@keyframes uiToastOut{to{opacity:0;translate:40px 0}}
+@keyframes uiBar{to{transform:scaleX(0)}}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.ui-reveal{opacity:1;translate:0 0}}

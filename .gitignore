@@ -1,0 +1,11 @@
+venv/
+.env
+__pycache__/
+*.pyc
+static/uploads/.venv/
+*.py[cod]
+.pytest_cache/
+.coverage
+instance/
+static/uploads/*
+!static/uploads/.gitkeep

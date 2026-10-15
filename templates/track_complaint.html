@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Civic Complaint | Civic Sync</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        /* HEADER / NAVBAR */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #0f172a;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .brand-text h2 {
+            font-size: 19px;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .brand-text span {
+            color: #0284c7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 9px 18px;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-nav-outline {
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            background: white;
+        }
+
+        .btn-nav-outline:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-nav-primary {
+            background: #0284c7;
+            color: white;
+        }
+
+        .btn-nav-primary:hover {
+            background: #0369a1;
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 920px;
+            margin: 36px auto;
+            padding: 0 20px;
+        }
+
+        /* SEARCH TRACKER CARD */
+        .tracker-search-card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 28px;
+        }
+
+        .search-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .search-title p {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            max-width: 580px;
+            margin: 0 auto;
+        }
+
+        .search-input-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input-wrap i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 13px 16px 13px 44px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+        }
+
+        .btn-track {
+            padding: 13px 26px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-track:hover {
+            background: #0369a1;
+        }
+
+        /* QUICK COMPLAINTS SELECTOR */
+        .my-complaints-pills {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .complaint-pill {
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: #f1f5f9;
+            color: #0284c7;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .complaint-pill:hover,
+        .complaint-pill.active {
+            background: #e0f2fe;
+            border-color: #7dd3fc;
+        }
+
+        /* TRACKING DETAILS CARD */
+        .track-result-card {
+            background: white;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 28px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 22px;
+            border-bottom: 1px solid #f1f5f9;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .result-title-group h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .result-meta-line {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 12px;
+            color: #64748b;
+            flex-wrap: wrap;
+        }
+
+        .badge-cat {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 7px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-reported { background: #e0f2fe; color: #0369a1; }
+        .status-review { background: #fef3c7; color: #92400e; }
+        .status-progress { background: #ffedd5; color: #c2410c; }
+        .status-resolved { background: #dcfce7; color: #15803d; }
+
+        /* STEPPER / TIMELINE */
+        .stepper-section {
+            margin-bottom: 34px;
+        }
+
+        .stepper-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stepper-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .stepper-track-bg {
+            position: absolute;
+            top: 24px;
+            left: 40px;
+            right: 40px;
+            height: 4px;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+
+        .stepper-track-progress {
+            position: absolute;
+            top: 24px;
+            left: 40px;
+            height: 4px;
+            background: linear-gradient(90deg, #10b981, #0284c7);
+            z-index: 2;
+            transition: width 0.4s ease;
+        }
+
+        .step-node {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 25%;
+            text-align: center;
+        }
+
+        .step-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .step-node.completed .step-circle {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .step-node.active .step-circle {
+            background: #0284c7;
+            border-color: #0284c7;
+            color: white;
+            box-shadow: 0 0 0 5px rgba(2, 132, 199, 0.2);
+            animation: pulse-ring 2s infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(2, 132, 199, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+        }
+
+        .step-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 3px;
+        }
+
+        .step-node.completed .step-title,
+        .step-node.active .step-title {
+            color: #0f172a;
+        }
+
+        .step-subtitle {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        /* AUDIT TIMELINE HISTORY LOG */
+        .timeline-log-card {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 22px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 24px;
+        }
+
+        .timeline-log-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .log-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .log-item {
+            display: flex;
+            gap: 14px;
+            position: relative;
+        }
+
+        .log-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #0284c7;
+            margin-top: 5px;
+            flex-shrink: 0;
+        }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .log-status {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .log-time {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .log-remarks {
+            font-size: 13px;
+            color: #475569;
+            background: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-top: 4px;
+        }
+
+        /* ASSURANCE GUARANTEE BANNER */
+        .assurance-box {
+            background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border-radius: 14px;
+            padding: 20px 24px;
+            border: 1px solid #bfdbfe;
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .assurance-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #0284c7;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .assurance-text h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .assurance-text p {
+            font-size: 12px;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        /* NO RESULT OR ERROR */
+        .empty-track {
+            text-align: center;
+            padding: 50px 20px;
+            color: #64748b;
+        }
+
+        .empty-track i {
+            font-size: 46px;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 650px) {
+            .stepper-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .stepper-track-bg, .stepper-track-progress { display: none; }
+            .step-node { width: 100%; flex-direction: row; gap: 14px; text-align: left; }
+            .step-circle { margin-bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <a href="/dashboard" class="nav-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-landmark"></i>
+            </div>
+            <div class="brand-text">
+                <h2>Civic<span>Sync</span></h2>
+            </div>
+        </a>
+
+        <div class="nav-links">
+            <a href="/community-voting" class="btn-nav" style="background:#fff7ed; border:1px solid #fed7aa; color:#ea580c; font-weight:700;">
+                <i class="fa-solid fa-fire"></i> Community Voting
+            </a>
+            <a href="/dashboard" class="btn-nav btn-nav-outline">
+                <i class="fa-solid fa-arrow-left"></i> Dashboard
+            </a>
+            <a href="/report-issue" class="btn-nav btn-nav-primary">
+                <i class="fa-solid fa-circle-plus"></i> Report Issue
+            </a>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- SEARCH TRACKER CARD -->
+        <div class="tracker-search-card">
+            <div class="search-title">
+                <h1>Civic Issue Live Status Tracker</h1>
+                <p>Enter your complaint ID to verify official department action, live progress, and resolution notes</p>
+            </div>
+
+            <form class="search-form" method="GET" action="/track-complaint">
+                <div class="search-input-wrap">
+                    <i class="fa-solid fa-hashtag"></i>
+                    <input
+                        type="number"
+                        name="id"
+                        class="search-input"
+                        placeholder="Enter Complaint ID (e.g. 1, 2, 3)"
+                        value="{{ complaint.complaint_id if complaint else '' }}"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn-track">
+                    <i class="fa-solid fa-magnifying-glass"></i> Track Progress
+                </button>
+            </form>
+
+            {% if user_complaints %}
+            <div class="my-complaints-pills">
+                <span>Your Complaints:</span>
+                {% for uc in user_complaints %}
+                <a href="/track-complaint/{{ uc.complaint_id }}" class="complaint-pill {% if complaint and complaint.complaint_id == uc.complaint_id %}active{% endif %}">
+                    #{{ uc.complaint_id }} {{ uc.title[:20] }}...
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if complaint %}
+        <!-- COMPLAINT RESULT CARD -->
+        <div class="track-result-card">
+
+            <div class="result-header">
+                <div class="result-title-group">
+                    <h2>#{{ complaint.complaint_id }} - {{ complaint.title }}</h2>
+                    <div class="result-meta-line">
+                        <span class="badge-cat">{{ complaint.category }}</span>
+                        <span style="background: rgba(234, 88, 12, 0.12); color: #ea580c; border: 1px solid rgba(234, 88, 12, 0.3); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-fire"></i> <span id="metaVoteCount">{{ complaint.upvotes_count | default(0) }}</span> Citizen Votes
+                        </span>
+                        <span><i class="fa-solid fa-location-dot" style="color: #0284c7;"></i> {{ complaint.location }}</span>
+                        <span><i class="fa-regular fa-clock"></i> Reported: {{ complaint.created_at.strftime('%d-%m-%Y %H:%M') if complaint.created_at else 'N/A' }}</span>
+                        <span style="background: rgba(56, 189, 248, 0.15); color: #0284c7; border: 1px solid rgba(56, 189, 248, 0.35); padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;">
+                            <i class="fa-solid fa-brain"></i> Evaluated by Google Gemini Flash AI
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    {% if complaint.status == 'Resolved' %}
+                        <span class="status-badge status-resolved">
+                            <i class="fa-solid fa-circle-check"></i> Resolved
+                        </span>
+                    {% elif complaint.status == 'In Progress' %}
+                        <span class="status-badge status-progress">
+                            <i class="fa-solid fa-person-digging"></i> In Progress
+                        </span>
+                    {% elif complaint.status == 'Under Review' %}
+                        <span class="status-badge status-review">
+                            <i class="fa-solid fa-magnifying-glass"></i> Under Review
+                        </span>
+                    {% else %}
+                        <span class="status-badge status-reported">
+                            <i class="fa-solid fa-file-circle-check"></i> Reported
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- COMMUNITY ENDORSEMENT & UPVOTE BANNER -->
+            <div style="background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%); border: 1.5px solid #fed7aa; border-radius: 14px; padding: 18px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 44px; height: 44px; border-radius: 12px; background: #ea580c; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 15px; font-weight: 700; color: #9a3412; margin-bottom: 2px;">
+                            Community Priority & Citizen Endorsement
+                        </h4>
+                        <p style="font-size: 12.5px; color: #c2410c; margin: 0;">
+                            <span id="voteCountText" style="font-weight: 700;">{{ complaint.upvotes_count | default(0) }} citizen{{ 's' if complaint.upvotes_count != 1 else '' }}</span> endorsed this issue. Problems with more votes receive faster crew dispatch.
+                        </p>
+                    </div>
+                </div>
+                <button type="button" id="trackVoteBtn" class="vote-action-btn {% if has_voted %}voted{% endif %}" onclick="toggleTrackVote({{ complaint.complaint_id }})" style="padding: 10px 22px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border: 1.5px solid {% if has_voted %}transparent{% else %}#fed7aa{% endif %}; background: {% if has_voted %}linear-gradient(135deg, #ea580c, #f97316){% else %}#ffffff{% endif %}; color: {% if has_voted %}#ffffff{% else %}#ea580c{% endif %}; box-shadow: 0 3px 12px rgba(234, 88, 12, 0.25); transition: all 0.2s;">
+                    <i class="fa-solid fa-thumbs-up"></i>
+                    <span id="voteBtnLabel">{% if has_voted %}Upvoted (+1){% else %}Upvote Problem{% endif %}</span>
+                </button>
+            </div>
+
+            <!-- STEPPER PROGRESS BAR -->
+            <div class="stepper-section">
+                <div class="stepper-title">
+                    <i class="fa-solid fa-bars-progress" style="color: #0284c7;"></i>
+                    Official Progress Stepper
+                </div>
+
+                {% set status_step = 1 %}
+                {% if complaint.status == 'Under Review' %}{% set status_step = 2 %}{% endif %}
+                {% if complaint.status == 'In Progress' %}{% set status_step = 3 %}{% endif %}
+                {% if complaint.status == 'Resolved' %}{% set status_step = 4 %}{% endif %}
+
+                <div class="stepper-container">
+                    <div class="stepper-track-bg"></div>
+                    <div class="stepper-track-progress" style="width: {{ (status_step - 1) * 33.3 }}%;"></div>
+
+                    <!-- Step 1: Reported -->
+                    <div class="step-node {% if status_step > 1 %}completed{% elif status_step == 1 %}active{% endif %}">
+                        <div class="step-circle">
+                            {% if status_step > 1 %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid fa-file-lines"></i>{% endif %}
+                        </div>
+                        <div class="step-title">1. Reported</div>
+                        <div class="step-subtitle">Received in System</div>
+                    </div>
+
+                    <!-- Step 2: Under Review -->
+                    <div class="step-node {% if status_step > 2 %}completed{% elif status_step == 2 %}active{% endif %}">
+                        <div class="step-circle">
+                            {% if status_step > 2 %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid fa-magnifying-glass"></i>{% endif %}
+                        </div>
+                        <div class="step-title">2. Under Review</div>
+                        <div class="step-subtitle">Dept Acknowledged</div>
+                    </div>
+
+                    <!-- Step 3: In Progress -->
+                    <div class="step-node {% if status_step > 3 %}completed{% elif status_step == 3 %}active{% endif %}">
+                        <div class="step-circle">
+                            {% if status_step > 3 %}<i class="fa-solid fa-check"></i>{% else %}<i class="fa-solid fa-person-digging"></i>{% endif %}
+                        </div>
+                        <div class="step-title">3. In Progress</div>
+                        <div class="step-subtitle">Work Crew Dispatched</div>
+                    </div>
+
+                    <!-- Step 4: Resolved -->
+                    <div class="step-node {% if status_step >= 4 %}completed{% endif %}">
+                        <div class="step-circle">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <div class="step-title">4. Resolved</div>
+                        <div class="step-subtitle">Completed & Verified</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- OFFICIAL AUDIT TRAIL LOG -->
+            <div class="timeline-log-card">
+                <div class="timeline-log-title">
+                    <i class="fa-solid fa-clock-rotate-left" style="color: #0284c7;"></i>
+                    Official Department Action Timeline
+                </div>
+
+                <div class="log-list">
+                    {% if history_logs %}
+                        {% for log in history_logs %}
+                        <div class="log-item">
+                            <div class="log-dot"></div>
+                            <div class="log-content">
+                                <div class="log-header">
+                                    <span class="log-status">{{ log.status }}</span>
+                                    <span class="log-time">{{ log.changed_at.strftime('%d %b %Y, %I:%M %p') if log.changed_at else 'Recent' }}</span>
+                                </div>
+                                {% if log.remarks %}
+                                <div class="log-remarks">
+                                    <i class="fa-solid fa-comment-dots" style="color: #0284c7; margin-right: 6px;"></i>
+                                    <strong>Official Remarks:</strong> {{ log.remarks }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="log-item">
+                            <div class="log-dot"></div>
+                            <div class="log-content">
+                                <div class="log-header">
+                                    <span class="log-status">{{ complaint.status }}</span>
+                                    <span class="log-time">{{ complaint.created_at.strftime('%d %b %Y, %I:%M %p') if complaint.created_at else 'Recent' }}</span>
+                                </div>
+                                <div class="log-remarks">
+                                    Complaint logged and queued for departmental action.
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- TRANSPARENCY & CITIZEN ASSURANCE GUARANTEE -->
+            <div class="assurance-box">
+                <div class="assurance-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+                <div class="assurance-text">
+                    <h4>Government Transparency Guarantee</h4>
+                    <p>
+                        Your complaint is securely registered with Municipal Civic Sync.
+                        Assigned Department: <strong>{{ complaint.category }} Department</strong>.
+                        Any status update or notes made by the municipal engineer are logged with a digital timestamp so you can stay fully informed.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+        {% elif searched_id %}
+        <!-- COMPLAINT NOT FOUND -->
+        <div class="tracker-search-card">
+            <div class="empty-track">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h3>No complaint found with ID #{{ searched_id }}</h3>
+                <p>Please double check your complaint number and try again.</p>
+                <a href="/my-complaints" class="btn-nav btn-nav-primary" style="display: inline-block; margin-top: 16px;">
+                    View My Complaints
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        async function toggleTrackVote(complaintId) {
+            const btn = document.getElementById('trackVoteBtn');
+            const label = document.getElementById('voteBtnLabel');
+            const countText = document.getElementById('voteCountText');
+            const metaCount = document.getElementById('metaVoteCount');
+
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+
+            try {
+                const resp = await fetch(`/api/complaints/${complaintId}/vote`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await resp.json();
+                btn.disabled = false;
+                btn.style.opacity = '1';
+
+                if (!resp.ok || !data.success) {
+                    alert(data.error || 'Please login to vote on civic issues.');
+                    return;
+                }
+
+                // Update count and label
+                if (metaCount) metaCount.textContent = data.upvotes_count;
+                if (countText) {
+                    countText.textContent = `${data.upvotes_count} citizen${data.upvotes_count === 1 ? '' : 's'}`;
+                }
+
+                if (data.voted) {
+                    btn.classList.add('voted');
+                    btn.style.background = 'linear-gradient(135deg, #ea580c, #f97316)';
+                    btn.style.color = '#ffffff';
+                    btn.style.borderColor = 'transparent';
+                    if (label) label.textContent = 'Upvoted (+1)';
+                } else {
+                    btn.classList.remove('voted');
+                    btn.style.background = '#ffffff';
+                    btn.style.color = '#ea580c';
+                    btn.style.borderColor = '#fed7aa';
+                    if (label) label.textContent = 'Upvote Problem';
+                }
+
+            } catch (err) {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                console.error('Vote error:', err);
+                alert('Unable to process vote right now.');
+            }
+        }
+    </script>
+</body>
+</html>

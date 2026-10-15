@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Complaints | Civic Sync</title>
+
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --primary-light: #eff6ff;
+            --secondary: #0ea5e9;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-600: #475569;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 20px -2px rgba(15,23,42,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: var(--slate-800);
+            min-height: 100vh;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: #cbd5e1;
+            padding: 24px 18px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0284c7, var(--primary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+        }
+
+        .brand-text h2 { font-size: 19px; color: white; font-weight: 700; }
+        .brand-text span { color: #38bdf8; }
+        .brand-tag { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; }
+
+        .menu-title {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+        }
+
+        .menu-list { display: flex; flex-direction: column; gap: 6px; }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            color: #94a3b8;
+            font-size: 13.5px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .menu-item i { width: 20px; text-align: center; font-size: 16px; }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(37,99,235,0.18);
+            color: #38bdf8;
+        }
+
+        .menu-item.active {
+            font-weight: 600;
+            color: white;
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(37,99,235,0.3);
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 18px;
+        }
+
+        .logout-btn { color: #f87171 !important; }
+        .logout-btn:hover { background: rgba(239,68,68,0.15) !important; color: #fca5a5 !important; }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 28px 36px 60px;
+        }
+
+        /* TOPBAR */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            gap: 20px;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+        .menu-toggle {
+            display: none;
+            width: 42px;
+            height: 42px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .page-title h1 { font-size: 24px; font-weight: 700; color: var(--slate-900); }
+        .page-title p { font-size: 13px; color: var(--slate-500); margin-top: 3px; }
+
+        .new-report-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
+            transition: all 0.2s;
+        }
+
+        .new-report-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* CONTROLS BAR: SEARCH + FILTERS */
+        .controls-card {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            padding: 8px 14px;
+            width: 320px;
+        }
+
+        .search-box i { color: var(--slate-400); font-size: 14px; }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 13px;
+            color: var(--slate-800);
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: var(--slate-100);
+            color: var(--slate-600);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .filter-pill:hover { background: #e2e8f0; }
+
+        .filter-pill.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: #93c5fd;
+        }
+
+        /* COMPLAINTS TABLE CARD */
+        .table-card {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 750px;
+        }
+
+        thead th {
+            background: #f8fafc;
+            padding: 14px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--slate-500);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        tbody td {
+            padding: 16px 20px;
+            font-size: 13px;
+            color: var(--slate-700);
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background: #fafcff;
+        }
+
+        .ticket-id {
+            font-weight: 700;
+            color: var(--primary);
+            font-family: monospace;
+            font-size: 13.5px;
+        }
+
+        .title-cell {
+            font-weight: 600;
+            color: var(--slate-900);
+            max-width: 280px;
+        }
+
+        .title-sub {
+            font-size: 11.5px;
+            color: var(--slate-400);
+            margin-top: 2px;
+        }
+
+        .cat-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: #f1f5f9;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--slate-700);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-reported { background: #dbeafe; color: #1e40af; }
+        .badge-review { background: #fef3c7; color: #92400e; }
+        .badge-progress { background: #ffedd5; color: #9a3412; }
+        .badge-resolved { background: #dcfce7; color: #166534; }
+
+        .action-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .action-link:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.25);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--slate-400);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            color: var(--slate-700);
+            margin-bottom: 6px;
+        }
+
+        /* OVERLAY */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            z-index: 999;
+        }
+
+        @media (max-width: 850px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; }
+            .main-content { margin-left: 0; width: 100%; padding: 20px; }
+            .menu-toggle { display: block; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-city"></i>
+            </div>
+            <div class="brand-text">
+                <h2>Civic<span>Sync</span></h2>
+                <div class="brand-tag">Citizen Portal</div>
+            </div>
+        </div>
+
+        <div class="menu-title">CITIZEN SERVICES</div>
+        <nav class="menu-list">
+            <a href="/dashboard" class="menu-item">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/community-voting" class="menu-item">
+                <i class="fa-solid fa-fire" style="color: #ea580c;"></i>
+                <span>Community Voting</span>
+                <span style="background: linear-gradient(135deg, #ea580c, #f97316); color: white; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 10px; margin-left: auto;">Escalate</span>
+            </a>
+            <a href="/report-issue" class="menu-item">
+                <i class="fa-solid fa-circle-plus"></i>
+                <span>Report an Issue</span>
+            </a>
+            <a href="/my-complaints" class="menu-item active">
+                <i class="fa-solid fa-clipboard-list"></i>
+                <span>My Complaints</span>
+            </a>
+            <a href="/track-complaint" class="menu-item">
+                <i class="fa-solid fa-location-crosshairs"></i>
+                <span>Track Complaint</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle Navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="page-title">
+                    <h1>My Filed Complaints</h1>
+                    <p>Track the lifecycle, authority investigations, and official remarks for all your grievances</p>
+                </div>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;">
+                <a href="/report-issue" class="new-report-btn">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <span>File New Complaint</span>
+                </a>
+                <div class="user-profile-badge" style="display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #e2e8f0;padding:6px 12px 6px 7px;border-radius:28px;box-shadow:0 2px 7px rgba(15,23,42,.06);">
+                    <div class="user-avatar" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;font-weight:700;">{{ session.get('user_name', 'C')[0] | upper }}</div>
+                    <div class="user-info"><h4 style="font-size:12px;font-weight:700;color:#0f172a;">{{ session.get('user_name', 'Citizen') }}</h4><span style="font-size:10px;color:#64748b;">{{ session.get('role', 'citizen') | title }} account</span></div>
+                    <i class="fa-solid fa-chevron-down" style="font-size:11px;color:#64748b;"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- MULTI-CITIZEN DUPLICATE CLUSTER BANNER -->
+        <div id="duplicateClusterBanner" style="display:none; margin-bottom:20px; background:linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border:1.5px solid #86efac; border-radius:var(--radius-md); padding:16px 20px; box-shadow:0 4px 16px rgba(16,185,129,0.15);">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0; box-shadow:0 3px 10px rgba(16,185,129,0.3);">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <h4 style="font-size:14.5px; font-weight:700; color:#14532d;">
+                            Multi-Citizen Grievance Clustered & Priority Escalated!
+                        </h4>
+                        <span style="font-size:10px; font-weight:700; background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:2px 8px; border-radius:12px; text-transform:uppercase;">
+                            Priority Boosted
+                        </span>
+                    </div>
+                    <p id="clusterBannerText" style="font-size:12.5px; color:#166534; line-height:1.45; margin-top:3px;">
+                        Another citizen in your locality had previously reported this civic problem. Your report has been accepted as an independent ticket and merged into the neighborhood cluster, recording your community endorsement vote and accelerating municipal SLA dispatch!
+                    </p>
+                </div>
+                <button type="button" onclick="document.getElementById('duplicateClusterBanner').style.display='none'" style="background:none; border:none; color:#15803d; font-size:17px; cursor:pointer; padding:4px;">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW TABS: MY COMPLAINTS VS COMMUNITY ISSUES -->
+        <div style="display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; align-items:center;">
+            <button type="button" id="tabMine" class="view-tab-btn" onclick="switchComplaintView('mine')" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13.5px; border:none; cursor:pointer; display:flex; align-items:center; gap:8px; background:var(--primary); color:white; box-shadow:0 4px 14px rgba(37,99,235,0.3); transition:all 0.2s;">
+                <i class="fa-solid fa-user-check"></i> My Complaints ({{ complaints|length if complaints else 0 }})
+            </button>
+            <button type="button" id="tabCommunity" class="view-tab-btn" onclick="switchComplaintView('community')" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13.5px; border:1.5px solid #cbd5e1; cursor:pointer; display:flex; align-items:center; gap:8px; background:white; color:#475569; transition:all 0.2s;">
+                <i class="fa-solid fa-fire" style="color:#ea580c;"></i> Community Issues & Voting ({{ community_complaints|length if community_complaints else 0 }})
+            </button>
+            <a href="/community-voting" class="view-tab-btn" style="padding:10px 20px; border-radius:10px; font-weight:700; font-size:13.5px; border:1.5px solid #fed7aa; cursor:pointer; display:flex; align-items:center; gap:8px; background:#fff7ed; color:#c2410c; text-decoration:none; margin-left:auto; transition:all 0.2s;">
+                <i class="fa-solid fa-square-poll-vertical"></i> Open Dedicated Voting Page &rarr;
+            </a>
+        </div>
+
+        <!-- MY COMPLAINTS VIEW WRAPPER -->
+        <div id="myComplaintsView">
+            <!-- CONTROLS: SEARCH + FILTER PILLS -->
+            <div class="controls-card">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search by title, location, or ID #...">
+                </div>
+
+                <div class="filter-pills">
+                    <button type="button" class="filter-pill active" data-filter="all">All Issues ({{ complaints|length if complaints else 0 }})</button>
+                    <button type="button" class="filter-pill" data-filter="Reported">Reported</button>
+                    <button type="button" class="filter-pill" data-filter="Under Review">Under Review</button>
+                    <button type="button" class="filter-pill" data-filter="In Progress">In Progress</button>
+                    <button type="button" class="filter-pill" data-filter="Resolved">Resolved</button>
+                </div>
+            </div>
+
+            <!-- COMPLAINTS TABLE -->
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table id="complaintsTable">
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Incident Title</th>
+                                <th>Department</th>
+                                <th>Location / Area</th>
+                                <th style="background:#fff7ed; color:#c2410c; border-bottom:2px solid #fed7aa;"><i class="fa-solid fa-fire"></i> Citizen Votes & Escalation</th>
+                                <th>Filing Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if complaints and complaints|length > 0 %}
+                                {% for c in complaints %}
+                                    <tr class="complaint-row" data-status="{{ c.status }}" data-text="{{ c.title|lower }} {{ c.location|lower }} {{ c.complaint_id }}">
+                                        <td class="ticket-id">#{{ c.complaint_id }}</td>
+                                        <td>
+                                            <div class="title-cell">{{ c.title }}</div>
+                                            <div class="title-sub">{{ c.description[:60] }}...</div>
+                                        </td>
+                                        <td>
+                                            <span class="cat-chip">
+                                                {% if 'road' in c.category|lower %}<i class="fa-solid fa-road" style="color:#2563eb;"></i>
+                                                {% elif 'sanitat' in c.category|lower %}<i class="fa-solid fa-trash-can" style="color:#10b981;"></i>
+                                                {% elif 'water' in c.category|lower %}<i class="fa-solid fa-faucet-drip" style="color:#0ea5e9;"></i>
+                                                {% elif 'electr' in c.category|lower %}<i class="fa-solid fa-bolt" style="color:#f59e0b;"></i>
+                                                {% elif 'drain' in c.category|lower %}<i class="fa-solid fa-water" style="color:#6366f1;"></i>
+                                                {% else %}<i class="fa-solid fa-circle-question" style="color:#64748b;"></i>
+                                                {% endif %}
+                                                {{ c.category }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <i class="fa-solid fa-location-dot" style="color:var(--slate-400); margin-right:4px;"></i>
+                                            {{ c.location }}
+                                        </td>
+                                        <td>
+                                            <button type="button" 
+                                                    id="myVoteBtn{{ c.complaint_id }}"
+                                                    class="vote-pill-btn {% if c.complaint_id in user_voted_ids %}voted{% endif %}" 
+                                                    onclick="handleMyVote({{ c.complaint_id }}, this)" 
+                                                    style="background:{% if c.complaint_id in user_voted_ids %}linear-gradient(135deg, #ea580c, #f97316){% else %}#fff7ed{% endif %}; color:{% if c.complaint_id in user_voted_ids %}#ffffff{% else %}#ea580c{% endif %}; border:1px solid #fed7aa; padding:4px 10px; border-radius:16px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;">
+                                                <i class="fa-solid fa-fire"></i>
+                                                <span class="v-num" id="myVoteNum{{ c.complaint_id }}">{{ c.upvotes_count | default(0) }}</span>
+                                            </button>
+                                        </td>
+                                        <td style="font-size:12px; color:var(--slate-500); white-space:nowrap;">
+                                            {{ c.created_at.strftime('%b %d, %Y') if c.created_at else 'N/A' }}
+                                        </td>
+                                        <td>
+                                            {% if c.status == 'Resolved' %}
+                                                <span class="status-badge badge-resolved">Resolved</span>
+                                            {% elif c.status == 'In Progress' %}
+                                                <span class="status-badge badge-progress">In Progress</span>
+                                            {% elif c.status == 'Under Review' %}
+                                                <span class="status-badge badge-review">Under Review</span>
+                                            {% else %}
+                                                <span class="status-badge badge-reported">Reported</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="/track-complaint/{{ c.complaint_id }}" class="action-link">
+                                                <i class="fa-solid fa-timeline"></i>
+                                                <span>Track</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="8">
+                                        <div class="empty-state">
+                                            <i class="fa-regular fa-folder-open"></i>
+                                            <h3>No Grievances Reported Yet</h3>
+                                            <p style="font-size:13px; margin-bottom:16px;">You haven't filed any municipal complaints. Help improve your neighborhood today.</p>
+                                            <a href="/report-issue" class="new-report-btn">
+                                                <i class="fa-solid fa-plus-circle"></i> File Your First Grievance
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMUNITY ISSUES & VOTING VIEW WRAPPER -->
+        <div id="communityIssuesView" style="display:none;">
+            <div style="background:white; border-radius:var(--radius-lg); border:1px solid var(--slate-200); padding:20px 24px; margin-bottom:20px;">
+                <h3 style="font-size:16px; font-weight:700; color:var(--slate-900); display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-fire" style="color:#ea580c;"></i>
+                    Community Issues & Democratic Upvoting
+                </h3>
+                <p style="font-size:12.5px; color:var(--slate-500); margin-top:2px;">
+                    Browse problems reported by other citizens in your city or area. Upvoting signals broad community impact and pushes the issue to first priority for municipal crews.
+                </p>
+            </div>
+
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ticket ID</th>
+                                <th>Incident Title</th>
+                                <th>Category</th>
+                                <th>Location / Area</th>
+                                <th style="background:#fff7ed; color:#c2410c; border-bottom:2px solid #fed7aa;"><i class="fa-solid fa-check-to-slot"></i> Vote & Escalate (+1)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if community_complaints and community_complaints|length > 0 %}
+                                {% for c in community_complaints %}
+                                <tr>
+                                    <td class="ticket-id">#{{ c.complaint_id }}</td>
+                                    <td>
+                                        <div class="title-cell">{{ c.title }}</div>
+                                        <div class="title-sub">{{ c.description[:70] }}...</div>
+                                    </td>
+                                    <td>
+                                        <span class="cat-chip">{{ c.category }}</span>
+                                    </td>
+                                    <td>
+                                        <i class="fa-solid fa-location-dot" style="color:#ea580c; margin-right:4px;"></i>
+                                        {{ c.location }}
+                                    </td>
+                                    <td>
+                                        <div style="display:flex; align-items:center; gap:8px;">
+                                            <button type="button" 
+                                                    id="commVoteBtn{{ c.complaint_id }}"
+                                                    class="vote-pill-btn {% if c.has_voted %}voted{% endif %}" 
+                                                    onclick="handleMyVote({{ c.complaint_id }}, this, true)" 
+                                                    style="background:{% if c.has_voted %}linear-gradient(135deg, #ea580c, #f97316){% else %}#fff7ed{% endif %}; color:{% if c.has_voted %}#ffffff{% else %}#ea580c{% endif %}; border:1.5px solid #fed7aa; padding:6px 12px; border-radius:18px; font-size:12px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;">
+                                                <i class="fa-solid fa-fire"></i>
+                                                <span id="commVoteNum{{ c.complaint_id }}">{{ c.upvotes_count }}</span>
+                                                <span>{% if c.has_voted %}Upvoted{% else %}Upvote{% endif %}</span>
+                                            </button>
+                                            <span style="font-size:11px; font-weight:700; color:#64748b;">
+                                                Score: {{ c.ai.urgency_score }}/100
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if c.status == 'Resolved' %}
+                                            <span class="status-badge badge-resolved">Resolved</span>
+                                        {% elif c.status == 'In Progress' %}
+                                            <span class="status-badge badge-progress">In Progress</span>
+                                        {% elif c.status == 'Under Review' %}
+                                            <span class="status-badge badge-review">Under Review</span>
+                                        {% else %}
+                                            <span class="status-badge badge-reported">Reported</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="/track-complaint/{{ c.complaint_id }}" class="action-link">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                            <span>Details</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" style="text-align:center; padding:30px; color:#94a3b8;">
+                                        No community complaints found.
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+    // MOBILE TOGGLE
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+
+    menuToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("open");
+        overlay.classList.toggle("show");
+    });
+    overlay.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("show");
+    });
+
+    // INSTANT LIVE SEARCH & STATUS FILTER
+    const searchInput = document.getElementById("searchInput");
+    const filterPills = document.querySelectorAll(".filter-pill");
+    const rows = document.querySelectorAll(".complaint-row");
+
+    let currentFilter = "all";
+
+    function filterTable() {
+        const query = searchInput.value.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const rowText = row.dataset.text || "";
+            const rowStatus = row.dataset.status || "";
+
+            const matchesSearch = !query || rowText.includes(query);
+            const matchesFilter = (currentFilter === "all") || (rowStatus === currentFilter);
+
+            if (matchesSearch && matchesFilter) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+    }
+
+    searchInput.addEventListener("input", filterTable);
+
+    filterPills.forEach(pill => {
+        pill.addEventListener("click", () => {
+            filterPills.forEach(p => p.classList.remove("active"));
+            pill.classList.add("active");
+            currentFilter = pill.dataset.filter;
+            filterTable();
+        });
+    });
+
+    // SWITCH COMPLAINT VIEW (MINE VS COMMUNITY)
+    function switchComplaintView(view) {
+        const tabMine = document.getElementById("tabMine");
+        const tabCommunity = document.getElementById("tabCommunity");
+        const myView = document.getElementById("myComplaintsView");
+        const commView = document.getElementById("communityIssuesView");
+
+        if (view === 'mine') {
+            tabMine.style.background = 'var(--primary)';
+            tabMine.style.color = '#ffffff';
+            tabMine.style.border = 'none';
+            tabMine.style.boxShadow = '0 4px 14px rgba(37,99,235,0.3)';
+
+            tabCommunity.style.background = '#ffffff';
+            tabCommunity.style.color = '#475569';
+            tabCommunity.style.border = '1.5px solid #cbd5e1';
+            tabCommunity.style.boxShadow = 'none';
+
+            myView.style.display = 'block';
+            commView.style.display = 'none';
+        } else {
+            tabCommunity.style.background = 'linear-gradient(135deg, #ea580c, #f97316)';
+            tabCommunity.style.color = '#ffffff';
+            tabCommunity.style.border = 'none';
+            tabCommunity.style.boxShadow = '0 4px 14px rgba(234,88,12,0.3)';
+
+            tabMine.style.background = '#ffffff';
+            tabMine.style.color = '#475569';
+            tabMine.style.border = '1.5px solid #cbd5e1';
+            tabMine.style.boxShadow = 'none';
+
+            myView.style.display = 'none';
+            commView.style.display = 'block';
+        }
+    }
+
+    // HANDLE VOTE IN MY COMPLAINTS OR COMMUNITY TABLE
+    async function handleMyVote(complaintId, btn, isCommunity = false) {
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+
+        try {
+            const resp = await fetch(`/api/complaints/${complaintId}/vote`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await resp.json();
+            btn.disabled = false;
+            btn.style.opacity = '1';
+
+            if (!resp.ok || !data.success) {
+                alert(data.error || 'Please login to vote.');
+                return;
+            }
+
+            // Update vote counts on both potential buttons for this complaint
+            const myNum = document.getElementById(`myVoteNum${complaintId}`);
+            const myBtn = document.getElementById(`myVoteBtn${complaintId}`);
+            const commNum = document.getElementById(`commVoteNum${complaintId}`);
+            const commBtn = document.getElementById(`commVoteBtn${complaintId}`);
+
+            if (myNum) myNum.textContent = data.upvotes_count;
+            if (commNum) commNum.textContent = data.upvotes_count;
+
+            if (data.voted) {
+                if (myBtn) {
+                    myBtn.classList.add('voted');
+                    myBtn.style.background = 'linear-gradient(135deg, #ea580c, #f97316)';
+                    myBtn.style.color = '#ffffff';
+                }
+                if (commBtn) {
+                    commBtn.classList.add('voted');
+                    commBtn.style.background = 'linear-gradient(135deg, #ea580c, #f97316)';
+                    commBtn.style.color = '#ffffff';
+                    commBtn.querySelector('span:last-child').textContent = 'Upvoted';
+                }
+            } else {
+                if (myBtn) {
+                    myBtn.classList.remove('voted');
+                    myBtn.style.background = '#fff7ed';
+                    myBtn.style.color = '#ea580c';
+                }
+                if (commBtn) {
+                    commBtn.classList.remove('voted');
+                    commBtn.style.background = '#fff7ed';
+                    commBtn.style.color = '#ea580c';
+                    commBtn.querySelector('span:last-child').textContent = 'Upvote';
+                }
+            }
+        } catch (err) {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            console.error('Vote error:', err);
+        }
+    }
+
+    // Check for duplicate cluster redirect params
+    (function checkDuplicateClusterParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('duplicate_cluster') === '1') {
+            const banner = document.getElementById('duplicateClusterBanner');
+            if (banner) {
+                banner.style.display = 'block';
+                const linkedId = urlParams.get('linked_id');
+                const count = urlParams.get('count');
+                const txt = document.getElementById('clusterBannerText');
+                if (txt && linkedId) {
+                    txt.innerHTML = `Another citizen had previously flagged this issue nearby. Your report has been accepted and linked to neighborhood grievance cluster <strong>#${linkedId}</strong> (${count || 2} citizen reports in this area). Your endorsement vote has been recorded and municipal emergency dispatch priority has been escalated!`;
+                }
+            }
+        }
+    })();
+</script>
+
+<style id="profile-dropdown-styles">
+.profile-dropdown-host{position:relative;}
+.profile-dropdown-trigger{cursor:pointer;user-select:none;}
+.profile-dropdown-trigger:focus-visible{outline:3px solid #38bdf8;outline-offset:3px;}
+.profile-dropdown-panel{position:absolute;right:0;top:calc(100% + 9px);width:250px;padding:14px;background:#fff;color:#0f172a;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 16px 40px rgba(15,23,42,.2);z-index:100000;display:none;text-align:left;}
+.profile-dropdown-panel.open{display:block;animation:profileDropIn .15s ease-out;}
+.profile-dropdown-name{font-size:14px;font-weight:750;line-height:1.35;overflow-wrap:anywhere;}
+.profile-dropdown-role{font-size:12px;color:#64748b;margin-top:4px;text-transform:capitalize;}
+.profile-dropdown-divider{height:1px;background:#e2e8f0;margin:12px 0;}
+.profile-dropdown-logout{display:flex;align-items:center;gap:9px;padding:10px;border-radius:9px;color:#dc2626;text-decoration:none;font-size:13px;font-weight:700;}
+.profile-dropdown-logout:hover{background:#fef2f2;}
+@keyframes profileDropIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.profile-dropdown-panel.open{animation:none}}
+</style>
+<script id="profile-dropdown-script">
+(function(){
+  'use strict';
+  const triggers = document.querySelectorAll('.user-profile-badge, .admin-profile, .dept-profile');
+  triggers.forEach(function(trigger, index){
+    if(trigger.dataset.profileDropdownReady === 'true') return;
+    trigger.dataset.profileDropdownReady = 'true';
+    trigger.classList.add('profile-dropdown-trigger');
+    trigger.setAttribute('role','button');
+    trigger.setAttribute('tabindex','0');
+    trigger.setAttribute('aria-haspopup','true');
+    trigger.setAttribute('aria-expanded','false');
+    const host = trigger.parentElement;
+    host.classList.add('profile-dropdown-host');
+    const nameNode = trigger.querySelector('.user-info h4, .admin-info h4, .dept-info h4');
+    const roleNode = trigger.querySelector('.user-info span, .admin-info p, .dept-info p');
+    const name = nameNode ? nameNode.textContent.trim() : (trigger.textContent.trim().split('\n').map(s=>s.trim()).filter(Boolean)[0] || 'Your account');
+    const role = roleNode ? roleNode.textContent.trim() : 'Account profile';
+    const panel = document.createElement('div');
+    panel.className = 'profile-dropdown-panel';
+    panel.id = 'profileDropdown' + index;
+    panel.innerHTML = '<div class="profile-dropdown-name"></div><div class="profile-dropdown-role"></div><div class="profile-dropdown-divider"></div><a class="profile-dropdown-logout" href="/logout"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i><span>Logout</span></a>';
+    panel.querySelector('.profile-dropdown-name').textContent = name;
+    panel.querySelector('.profile-dropdown-role').textContent = role;
+    host.appendChild(panel);
+    trigger.setAttribute('aria-controls', panel.id);
+    function close(){ panel.classList.remove('open'); trigger.setAttribute('aria-expanded','false'); }
+    function toggle(event){ if(event) event.stopPropagation(); const opening=!panel.classList.contains('open'); document.querySelectorAll('.profile-dropdown-panel.open').forEach(p=>p.classList.remove('open')); document.querySelectorAll('[aria-controls^="profileDropdown"]').forEach(t=>t.setAttribute('aria-expanded','false')); if(opening){panel.classList.add('open');trigger.setAttribute('aria-expanded','true');} }
+    trigger.addEventListener('click',toggle);
+    trigger.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(e);}else if(e.key==='Escape'){close();}});
+    panel.addEventListener('click',function(e){e.stopPropagation();});
+  });
+  document.addEventListener('click',function(){document.querySelectorAll('.profile-dropdown-panel.open').forEach(p=>p.classList.remove('open'));document.querySelectorAll('[aria-controls^="profileDropdown"]').forEach(t=>t.setAttribute('aria-expanded','false'));});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){document.querySelectorAll('.profile-dropdown-panel.open').forEach(p=>p.classList.remove('open'));document.querySelectorAll('[aria-controls^="profileDropdown"]').forEach(t=>t.setAttribute('aria-expanded','false'));}});
+})();
+</script>
+
+</body>
+</html>
